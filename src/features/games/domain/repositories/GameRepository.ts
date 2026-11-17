@@ -1,0 +1,36 @@
+import { Game } from '../entities/Game';
+
+export interface GetGamesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  categoryId?: string;
+}
+
+export interface CreateGameParams {
+  title: string;
+  description: string;
+  originalPrice: number;
+  discount?: number;
+  developer: string;
+  releaseDate: Date;
+  coverImage?: string | null;
+}
+
+export interface UpdateGameParams {
+  title?: string;
+  description?: string;
+  originalPrice?: number;
+  developer?: string;
+  releaseDate?: Date;
+  coverImage?: string | null;
+}
+
+export interface GameRepository {
+  getAll(params?: GetGamesParams): Promise<Game[]>;
+  getById(id: string): Promise<Game>;
+  create(params: CreateGameParams): Promise<Game>;
+  update(id: string, params: UpdateGameParams): Promise<Game>;
+  updateDiscount(id: string, discount: number): Promise<Game>;
+  delete(id: string): Promise<void>;
+}

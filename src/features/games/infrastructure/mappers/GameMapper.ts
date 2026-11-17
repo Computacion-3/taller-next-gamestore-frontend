@@ -1,0 +1,67 @@
+import { Game } from '../../domain/entities/Game';
+import {
+  CreateGameParams,
+  UpdateGameParams,
+} from '../../domain/repositories/GameRepository';
+import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
+
+export class GameMapper {
+  static toDomain(dto: GameDto): Game {
+    return new Game({
+      id: dto.id,
+      title: dto.title,
+      description: dto.description,
+      price: Number(dto.price),
+      originalPrice: Number(dto.originalPrice),
+      discount: Number(dto.discount ?? 0),
+      developer: dto.developer,
+      releaseDate: new Date(dto.releaseDate),
+      coverImage: dto.coverImage ?? null,
+      isActive: Boolean(dto.isActive ?? true),
+      createdAt: dto.createdAt ? new Date(dto.createdAt) : undefined,
+      updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : undefined,
+    });
+  }
+
+  static toDto(entity: Game): GameDto {
+    return {
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      price: entity.price,
+      originalPrice: entity.originalPrice,
+      discount: entity.discount,
+      developer: entity.developer,
+      releaseDate: entity.releaseDate.toISOString().split('T')[0],
+      coverImage: entity.coverImage,
+      isActive: entity.isActive,
+      createdAt: entity.createdAt?.toISOString(),
+      updatedAt: entity.updatedAt?.toISOString(),
+    };
+  }
+
+  static toCreateDto(params: CreateGameParams): CreateGameDto {
+    return {
+      title: params.title,
+      description: params.description,
+      originalPrice: params.originalPrice,
+      discount: params.discount,
+      developer: params.developer,
+      releaseDate: params.releaseDate.toISOString().split('T')[0],
+      coverImage: params.coverImage ?? null,
+    };
+  }
+
+  static toUpdateDto(params: UpdateGameParams): UpdateGameDto {
+    return {
+      ...(params.title !== undefined && { title: params.title }),
+      ...(params.description !== undefined && { description: params.description }),
+      ...(params.originalPrice !== undefined && { originalPrice: params.originalPrice }),
+      ...(params.developer !== undefined && { developer: params.developer }),
+      ...(params.releaseDate !== undefined && {
+        releaseDate: params.releaseDate.toISOString().split('T')[0],
+      }),
+      ...(params.coverImage !== undefined && { coverImage: params.coverImage }),
+    };
+  }
+}
