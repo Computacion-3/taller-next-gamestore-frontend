@@ -3,7 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
+import { selectAuth } from '@/shared/store/selectors';
 import { authContainer } from '../../di/auth.container';
+import { Authority } from '../../domain/entities/Authority';
 import { AuthUser, AuthUserProps } from '../../domain/entities/AuthUser';
 import {
   LoginCredentials,
@@ -12,6 +14,7 @@ import {
 import {
   resetAuthState,
   setAuthError,
+  setAuthHydrated,
   setAuthLoading,
   setAuthSession,
   setAuthUser,
@@ -29,10 +32,10 @@ function toUserProps(user: AuthUser): AuthUserProps {
 export function useAuth() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const state = useAppSelector((root) => root.auth);
+  const state = useAppSelector(selectAuth);
 
   useEffect(() => {
-    if (!state.isAuthenticated) {
+    if (!state.hydrated) {
       const stored = authContainer.getStoredSessionUseCase.execute();
       if (stored) {
         dispatch(
@@ -41,9 +44,11 @@ export function useAuth() {
             user: toUserProps(stored.user),
           }),
         );
+      } else {
+        dispatch(setAuthHydrated(true));
       }
     }
-  }, [dispatch, state.isAuthenticated]);
+  }, [dispatch, state.hydrated]);
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
@@ -112,13 +117,21 @@ export function useAuth() {
     dispatch(setAuthError(null));
   }, [dispatch]);
 
+  const hasAuthority = useCallback(
+    (authority: Authority) => state.authorities.includes(authority),
+    [state.authorities],
+  );
+
   return {
     user: state.user,
     token: state.token,
+    authorities: state.authorities,
     isAuthenticated: state.isAuthenticated,
+    hydrated: state.hydrated,
     isAdmin: state.user?.role === 'admin',
     isLoading: state.isLoading,
     error: state.error,
+    hasAuthority,
     login,
     register,
     refreshProfile,

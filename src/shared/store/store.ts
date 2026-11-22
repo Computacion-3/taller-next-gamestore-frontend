@@ -9,6 +9,7 @@ import { libraryReducer } from '@/features/library/presentation/store/library.sl
 import { purchasesReducer } from '@/features/purchases/presentation/store/purchases.slice';
 import { usersReducer } from '@/features/users/presentation/store/users.slice';
 import { wishlistReducer } from '@/features/wishlist/presentation/store/wishlist.slice';
+import { uiReducer } from './ui.slice';
 
 const appReducer = combineReducers({
   auth: authReducer,
@@ -18,6 +19,7 @@ const appReducer = combineReducers({
   library: libraryReducer,
   purchases: purchasesReducer,
   users: usersReducer,
+  ui: uiReducer,
 });
 
 const rootReducer = (
