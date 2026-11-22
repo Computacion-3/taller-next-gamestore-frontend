@@ -56,4 +56,17 @@ export class AuthRepositoryImpl implements AuthRepository {
   getToken(): string | null {
     return this.storage.getToken();
   }
+
+  getStoredSession(): AuthSession | null {
+    const token = this.storage.getToken();
+    const userDto = this.storage.getUser();
+    if (!token || !userDto) {
+      return null;
+    }
+    return {
+      accessToken: token,
+      tokenType: 'Bearer',
+      user: AuthMapper.userToDomain(userDto),
+    };
+  }
 }

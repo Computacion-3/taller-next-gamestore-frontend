@@ -1,0 +1,24 @@
+import { tokenStorage } from '../../auth/infrastructure/storage/tokenStorage';
+import {
+  ChangeMyPasswordUseCase,
+  GetUsersUseCase,
+  UpdateMyEmailUseCase,
+  UpdateUserRoleUseCase,
+} from '../domain/usecases/userUseCases';
+import {
+  UserRepositoryImpl,
+  UserRestDatasource,
+} from '../infrastructure/repositories/UserRepositoryImpl';
+
+const datasource = new UserRestDatasource(undefined, () =>
+  tokenStorage.getToken(),
+);
+const userRepository = new UserRepositoryImpl(datasource);
+
+export const usersContainer = {
+  getUsersUseCase: new GetUsersUseCase(userRepository),
+  updateUserRoleUseCase: new UpdateUserRoleUseCase(userRepository),
+  updateMyEmailUseCase: new UpdateMyEmailUseCase(userRepository),
+  changeMyPasswordUseCase: new ChangeMyPasswordUseCase(userRepository),
+  userRepository,
+};

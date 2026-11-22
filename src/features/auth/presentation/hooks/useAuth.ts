@@ -1,91 +1,116 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { authContainer } from '../../di/auth.container';
+import { AuthUser, AuthUserProps } from '../../domain/entities/AuthUser';
 import {
   LoginCredentials,
   RegisterCredentials,
 } from '../../domain/repositories/AuthRepository';
-import { AuthMapper } from '../../infrastructure/mappers/AuthMapper';
-import { AuthState, authStore } from '../store/auth.slice';
+import {
+  resetAuthState,
+  setAuthError,
+  setAuthLoading,
+  setAuthSession,
+  setAuthUser,
+} from '../store/auth.slice';
+
+function toUserProps(user: AuthUser): AuthUserProps {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    walletBalance: user.walletBalance,
+  };
+}
 
 export function useAuth() {
   const router = useRouter();
-  const [state, setState] = useState<AuthState>(() => authStore.getState());
+  const dispatch = useAppDispatch();
+  const state = useAppSelector((root) => root.auth);
 
   useEffect(() => {
-    const unsubscribe = authStore.subscribe(setState);
-
-    // Hidratar sesión desde localStorage si aún no está en memoria
-    const current = authStore.getState();
-    if (!current.isAuthenticated) {
-      const savedToken = authContainer.tokenStorage.getToken();
-      const savedUser = authContainer.tokenStorage.getUser();
-      if (savedToken && savedUser) {
-        authStore.setSession(savedToken, savedUser);
+    if (!state.isAuthenticated) {
+      const stored = authContainer.getStoredSessionUseCase.execute();
+      if (stored) {
+        dispatch(
+          setAuthSession({
+            token: stored.accessToken,
+            user: toUserProps(stored.user),
+          }),
+        );
       }
     }
-
-    return unsubscribe;
-  }, []);
+  }, [dispatch, state.isAuthenticated]);
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
-      authStore.setLoading(true);
+      dispatch(setAuthLoading(true));
       try {
         const session = await authContainer.loginUseCase.execute(credentials);
-        authStore.setSession(
-          session.accessToken,
-          AuthMapper.userToDto(session.user),
+        dispatch(
+          setAuthSession({
+            token: session.accessToken,
+            user: toUserProps(session.user),
+          }),
         );
         router.push('/');
         return session;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Error al iniciar sesión.';
-        authStore.setError(message);
+        dispatch(setAuthError(message));
         throw err;
       }
     },
-    [router],
+    [dispatch, router],
   );
 
   const register = useCallback(
     async (credentials: RegisterCredentials) => {
-      authStore.setLoading(true);
+      dispatch(setAuthLoading(true));
       try {
         const session =
           await authContainer.registerUseCase.execute(credentials);
-        authStore.setSession(
-          session.accessToken,
-          AuthMapper.userToDto(session.user),
+        dispatch(
+          setAuthSession({
+            token: session.accessToken,
+            user: toUserProps(session.user),
+          }),
         );
         router.push('/');
         return session;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Error al registrar usuario.';
-        authStore.setError(message);
+        dispatch(setAuthError(message));
         throw err;
       }
     },
-    [router],
+    [dispatch, router],
   );
 
+  const refreshProfile = useCallback(async () => {
+    const profile = await authContainer.getProfileUseCase.execute();
+    dispatch(setAuthUser(toUserProps(profile)));
+    return profile;
+  }, [dispatch]);
+
   const logout = useCallback(async () => {
-    authStore.setLoading(true);
+    dispatch(setAuthLoading(true));
     try {
       await authContainer.logoutUseCase.execute();
     } finally {
-      authStore.reset();
+      dispatch(resetAuthState());
       router.push('/login');
     }
-  }, [router]);
+  }, [dispatch, router]);
 
   const clearError = useCallback(() => {
-    authStore.setError(null);
-  }, []);
+    dispatch(setAuthError(null));
+  }, [dispatch]);
 
   return {
     user: state.user,
@@ -96,6 +121,7 @@ export function useAuth() {
     error: state.error,
     login,
     register,
+    refreshProfile,
     logout,
     clearError,
   };

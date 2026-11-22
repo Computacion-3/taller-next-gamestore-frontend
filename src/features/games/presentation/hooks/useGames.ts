@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { gamesContainer } from '../../di/games.container';
 import { Game } from '../../domain/entities/Game';
 import {
@@ -8,24 +9,39 @@ import {
   GetGamesParams,
   UpdateGameParams,
 } from '../../domain/repositories/GameRepository';
+import {
+  addGame,
+  deserializeGame,
+  removeGame,
+  replaceGame,
+  serializeGame,
+  setGames,
+  setGamesError,
+  setGamesLoading,
+} from '../store/games.slice';
 
 export function useGames(initialParams?: GetGamesParams) {
-  const [games, setGames] = useState<Game[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { items, isLoading, error } = useAppSelector((root) => root.games);
 
-  const fetchGames = useCallback(async (params?: GetGamesParams) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const result = await gamesContainer.getGamesUseCase.execute(params);
-      setGames(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error inesperado');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const games = useMemo(() => items.map(deserializeGame), [items]);
+
+  const fetchGames = useCallback(
+    async (params?: GetGamesParams) => {
+      dispatch(setGamesLoading(true));
+      try {
+        const result = await gamesContainer.getGamesUseCase.execute(params);
+        dispatch(setGames(result.map(serializeGame)));
+      } catch (err) {
+        dispatch(
+          setGamesError(
+            err instanceof Error ? err.message : 'Error inesperado',
+          ),
+        );
+      }
+    },
+    [dispatch],
+  );
 
   const getGameById = useCallback(async (id: string): Promise<Game> => {
     return gamesContainer.getGameByIdUseCase.execute(id);
@@ -34,19 +50,19 @@ export function useGames(initialParams?: GetGamesParams) {
   const createGame = useCallback(
     async (params: CreateGameParams): Promise<Game> => {
       const created = await gamesContainer.createGameUseCase.execute(params);
-      setGames((prev) => [created, ...prev]);
+      dispatch(addGame(serializeGame(created)));
       return created;
     },
-    [],
+    [dispatch],
   );
 
   const updateGame = useCallback(
     async (id: string, params: UpdateGameParams): Promise<Game> => {
       const updated = await gamesContainer.updateGameUseCase.execute(id, params);
-      setGames((prev) => prev.map((item) => (item.id === id ? updated : item)));
+      dispatch(replaceGame(serializeGame(updated)));
       return updated;
     },
-    [],
+    [dispatch],
   );
 
   const updateDiscount = useCallback(
@@ -55,35 +71,38 @@ export function useGames(initialParams?: GetGamesParams) {
         id,
         discount,
       );
-      setGames((prev) => prev.map((item) => (item.id === id ? updated : item)));
+      dispatch(replaceGame(serializeGame(updated)));
       return updated;
     },
-    [],
+    [dispatch],
   );
 
-  const deleteGame = useCallback(async (id: string): Promise<void> => {
-    await gamesContainer.deleteGameUseCase.execute(id);
-    setGames((prev) => prev.filter((item) => item.id !== id));
-  }, []);
+  const deleteGame = useCallback(
+    async (id: string): Promise<void> => {
+      await gamesContainer.deleteGameUseCase.execute(id);
+      dispatch(removeGame(id));
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     let cancelled = false;
 
     const load = async () => {
+      dispatch(setGamesLoading(true));
       try {
         const result =
           await gamesContainer.getGamesUseCase.execute(initialParams);
         if (!cancelled) {
-          setGames(result);
-          setError(null);
+          dispatch(setGames(result.map(serializeGame)));
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Error inesperado');
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
+          dispatch(
+            setGamesError(
+              err instanceof Error ? err.message : 'Error inesperado',
+            ),
+          );
         }
       }
     };
@@ -92,7 +111,7 @@ export function useGames(initialParams?: GetGamesParams) {
     return () => {
       cancelled = true;
     };
-  }, [initialParams]);
+  }, [dispatch, initialParams]);
 
   return {
     games,

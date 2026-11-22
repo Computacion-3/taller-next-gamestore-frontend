@@ -1,4 +1,5 @@
 import { GetProfileUseCase } from '../domain/usecases/GetProfileUseCase';
+import { GetStoredSessionUseCase } from '../domain/usecases/GetStoredSessionUseCase';
 import { LoginUseCase } from '../domain/usecases/LoginUseCase';
 import { LogoutUseCase } from '../domain/usecases/LogoutUseCase';
 import { RegisterUseCase } from '../domain/usecases/RegisterUseCase';
@@ -17,6 +18,6 @@ export const authContainer = {
   registerUseCase: new RegisterUseCase(authRepository),
   logoutUseCase: new LogoutUseCase(authRepository),
   getProfileUseCase: new GetProfileUseCase(authRepository),
+  getStoredSessionUseCase: new GetStoredSessionUseCase(authRepository),
   authRepository,
-  tokenStorage,
 };

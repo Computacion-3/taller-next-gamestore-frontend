@@ -16,4 +16,5 @@ export interface AuthRepository {
   logout(): Promise<void>;
   getProfile(): Promise<AuthUser>;
   getToken(): string | null;
+  getStoredSession(): AuthSession | null;
 }
