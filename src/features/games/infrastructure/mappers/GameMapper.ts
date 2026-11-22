@@ -44,11 +44,12 @@ export class GameMapper {
     return {
       title: params.title,
       description: params.description,
-      originalPrice: params.originalPrice,
-      discount: params.discount,
+      price: params.originalPrice,
+      ...(params.discount !== undefined && { discount: params.discount }),
       developer: params.developer,
       releaseDate: params.releaseDate.toISOString().split('T')[0],
-      coverImage: params.coverImage ?? null,
+      ...(params.coverImage ? { coverImage: params.coverImage } : {}),
+      ...(params.categoryIds !== undefined && { categoryIds: params.categoryIds }),
     };
   }
 
@@ -56,12 +57,13 @@ export class GameMapper {
     return {
       ...(params.title !== undefined && { title: params.title }),
       ...(params.description !== undefined && { description: params.description }),
-      ...(params.originalPrice !== undefined && { originalPrice: params.originalPrice }),
+      ...(params.originalPrice !== undefined && { price: params.originalPrice }),
       ...(params.developer !== undefined && { developer: params.developer }),
       ...(params.releaseDate !== undefined && {
         releaseDate: params.releaseDate.toISOString().split('T')[0],
       }),
-      ...(params.coverImage !== undefined && { coverImage: params.coverImage }),
+      ...(params.coverImage ? { coverImage: params.coverImage } : {}),
+      ...(params.categoryIds !== undefined && { categoryIds: params.categoryIds }),
     };
   }
 }

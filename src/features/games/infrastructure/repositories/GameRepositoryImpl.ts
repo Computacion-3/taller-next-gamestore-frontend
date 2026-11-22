@@ -12,6 +12,7 @@ export type DataSourceType = 'rest' | 'graphql';
 
 export class GameRepositoryImpl implements GameRepository {
   private readonly activeDatasource: GameDatasource;
+  public readonly activeSource: DataSourceType;
 
   constructor(
     private readonly restDatasource: GameDatasource,
@@ -30,6 +31,7 @@ export class GameRepositoryImpl implements GameRepository {
       );
     }
 
+    this.activeSource = configuredSource;
     this.activeDatasource =
       configuredSource === 'graphql'
         ? this.graphqlDatasource

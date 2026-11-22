@@ -15,6 +15,7 @@ export interface CreateGameParams {
   developer: string;
   releaseDate: Date;
   coverImage?: string | null;
+  categoryIds?: string[];
 }
 
 export interface UpdateGameParams {
@@ -24,6 +25,7 @@ export interface UpdateGameParams {
   developer?: string;
   releaseDate?: Date;
   coverImage?: string | null;
+  categoryIds?: string[];
 }
 
 export interface GameRepository {

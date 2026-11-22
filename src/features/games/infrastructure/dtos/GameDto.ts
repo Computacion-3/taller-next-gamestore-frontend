@@ -16,18 +16,20 @@ export interface GameDto {
 export interface CreateGameDto {
   title: string;
   description: string;
-  originalPrice: number;
+  price: number;
   discount?: number;
   developer: string;
   releaseDate: string;
-  coverImage?: string | null;
+  coverImage?: string;
+  categoryIds?: string[];
 }
 
 export interface UpdateGameDto {
   title?: string;
   description?: string;
-  originalPrice?: number;
+  price?: number;
   developer?: string;
   releaseDate?: string;
-  coverImage?: string | null;
+  coverImage?: string;
+  categoryIds?: string[];
 }

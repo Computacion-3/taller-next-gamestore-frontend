@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GameStore Frontend (Next.js + Clean Architecture)
 
-## Getting Started
+Aplicación frontend construida con **Next.js (App Router + TypeScript)** siguiendo **Clean Architecture (Feature-First)**, con soporte dual intercambiable entre **REST** y **GraphQL** en el módulo de `games`.
 
-First, run the development server:
+## Variables de entorno
+
+Copia `.env.example` a `.env.local`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_DATA_SOURCE=rest # o "graphql"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Arranque en desarrollo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+## Módulo Dual: REST y GraphQL (`src/features/games`)
 
-To learn more about Next.js, take a look at the following resources:
+El módulo `games` demuestra el desacoplamiento de **Clean Architecture**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Dominio (`domain/`):** Entidad `Game`, puerto único `GameRepository` y casos de uso (`GetGamesUseCase`, `GetGameByIdUseCase`, `CreateGameUseCase`, `UpdateGameUseCase`, `UpdateGameDiscountUseCase`, `DeleteGameUseCase`). No depende de REST, GraphQL, React ni Next.js.
+- **Infraestructura (`infrastructure/`):**
+  - Interfaz `GameDatasource` y DTOs compartidos (`GameDto`, `CreateGameDto`, `UpdateGameDto`).
+  - `GameRestDatasource`: consume los endpoints REST `/games`.
+  - `GameGraphQLDatasource`: consume el endpoint GraphQL `/graphql` con las queries/mutations `games`, `game`, `createGame`, `updateGame`, `updateGameDiscount` y `removeGame`.
+  - `GameMapper`: convierte los DTOs de ambas fuentes hacia la entidad de dominio `Game`.
+  - `GameRepositoryImpl`: selecciona el datasource activo según `NEXT_PUBLIC_DATA_SOURCE=rest|graphql`.
+- **Presentación (`presentation/`):** Hook fachada `useGames` y componentes puros (`GameList`, `GameCard`). Cambiar la variable de entorno **no modifica** dominio, casos de uso, hooks ni UI.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Comparativo REST vs. GraphQL
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Aspecto | REST (`GameRestDatasource`) | GraphQL (`GameGraphQLDatasource`) |
+| --- | --- | --- |
+| **Endpoints** | Múltiples rutas (`/games`, `/games/:id`, `/games/:id/discount`) con verbos HTTP (`GET`, `POST`, `PATCH`, `DELETE`). | Único endpoint (`POST /graphql`) con operaciones declarativas (`query` / `mutation`). |
+| **Selección de campos** | El servidor retorna siempre el payload completo definido por el controlador. | El cliente solicita exactamente los campos requeridos (`GAME_FIELDS`), evitando *over-fetching*. |
+| **Autenticación** | `Authorization: Bearer <token>` validado por `JwtAuthGuard` y `RolesGuard`. | Mismo header `Authorization: Bearer <token>` validado en contexto GraphQL por los mismos guards. |
+| **Tipado de contrato** | Documentado vía OpenAPI/Swagger (`/api/docs`). | Esquema tipado autogenerado (`autoSchemaFile: true`) en NestJS GraphQL. |
+| **Impacto en Clean Architecture** | Ninguno sobre dominio o UI; ambos retornan el mismo `GameDto` hacia `GameMapper`. | Ninguno sobre dominio o UI; intercambiable mediante `NEXT_PUBLIC_DATA_SOURCE=graphql`. |
