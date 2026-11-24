@@ -9,16 +9,13 @@ import { useAuth } from '@/features/auth/presentation/hooks/useAuth';
 const PRIMARY_NAV = [
   { label: 'TIENDA', href: '/' },
   { label: 'BIBLIOTECA', href: '/library' },
-  { label: 'DESEOS', href: '/wishlist' },
+  { label: 'WISHLIST', href: '/wishlist' },
   { label: 'COMPRAS', href: '/purchases' },
 ];
 
 const QUICK_ACCESS_NAV = [
   { label: 'Explorar Juegos', href: '/' },
   { label: 'Categorías', href: '/categories' },
-  { label: 'Lista de Deseos', href: '/wishlist' },
-  { label: 'Mi Biblioteca', href: '/library' },
-  { label: 'Mis Compras', href: '/purchases' },
 ];
 
 export function Header() {

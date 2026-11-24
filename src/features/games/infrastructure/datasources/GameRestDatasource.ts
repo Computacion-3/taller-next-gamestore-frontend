@@ -6,7 +6,7 @@ export class GameRestDatasource implements GameDatasource {
   private readonly baseUrl: string;
 
   constructor(
-    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000',
+    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
     private readonly getToken?: () => string | null,
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
