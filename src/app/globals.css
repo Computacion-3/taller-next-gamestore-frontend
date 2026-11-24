@@ -6,6 +6,12 @@
 }
 
 @theme inline {
+  --color-blue-night: #03045E;
+  --color-blue-sky: #84C1FF;
+  --color-blue-star: #00B4FF;
+  --color-blue-cloud: #D6EAFF;
+  --color-blue-water:  #36C3CF;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
