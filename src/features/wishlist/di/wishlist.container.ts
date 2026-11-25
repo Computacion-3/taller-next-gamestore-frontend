@@ -5,11 +5,8 @@ import {
   GetPriceAlertsUseCase,
   RemoveWishlistItemUseCase,
 } from '../domain/usecases/wishlistUseCases';
-import {
-  WishlistRepositoryImpl,
-  WishlistRestDatasource,
-} from '../infrastructure/repositories/WishlistRepositoryImpl';
-
+import { WishlistRestDatasource } from '../infrastructure/datasources/WishlistRestDatasource';
+import { WishlistRepositoryImpl } from '../infrastructure/repositories/WishlistRepositoryImpl';
 const datasource = new WishlistRestDatasource(undefined, () =>
   tokenStorage.getToken(),
 );
