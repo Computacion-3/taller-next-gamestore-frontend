@@ -32,9 +32,16 @@ export interface CategoryDetailRecord {
   games: GameRecord[];
 }
 
+/** Categorías de un juego concreto (detalle del juego y administración). */
+export interface GameCategoriesRecord {
+  gameId: string;
+  items: CategoryRecord[];
+}
+
 export interface CategoriesState {
   items: CategoryRecord[];
   detail: CategoryDetailRecord | null;
+  gameCategories: GameCategoriesRecord | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -42,6 +49,7 @@ export interface CategoriesState {
 const initialState: CategoriesState = {
   items: [],
   detail: null,
+  gameCategories: null,
   isLoading: false,
   error: null,
 };
@@ -63,6 +71,9 @@ const categoriesSlice = createSlice({
       state.detail = action.payload;
       state.isLoading = false;
       state.error = null;
+    },
+    setGameCategories(state, action: PayloadAction<GameCategoriesRecord>) {
+      state.gameCategories = action.payload;
     },
     addCategory(state, action: PayloadAction<CategoryRecord>) {
       state.items.push(action.payload);
@@ -94,6 +105,7 @@ export const {
   removeCategory,
   setCategoriesError,
   resetCategoriesState,
+  setGameCategories,
 } = categoriesSlice.actions;
 
 export const categoriesReducer = categoriesSlice.reducer;

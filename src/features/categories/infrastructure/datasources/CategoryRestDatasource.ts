@@ -10,6 +10,7 @@ export interface CategoryDatasource {
   getAll(): Promise<CategoryDto[]>;
   getById(id: string): Promise<CategoryDto>;
   getGames(categoryId: string): Promise<GameDto[]>;
+  getByGame(gameId: string): Promise<CategoryDto[]>;
   create(dto: CreateCategoryDto): Promise<CategoryDto>;
   update(id: string, dto: UpdateCategoryDto): Promise<CategoryDto>;
   delete(id: string): Promise<void>;
@@ -32,6 +33,10 @@ export class CategoryRestDatasource implements CategoryDatasource {
 
   getGames(categoryId: string): Promise<GameDto[]> {
     return this.http.request<GameDto[]>(`/categories/${categoryId}/games`);
+  }
+
+  getByGame(gameId: string): Promise<CategoryDto[]> {
+    return this.http.request<CategoryDto[]>(`/games/${gameId}/categories`);
   }
 
   create(dto: CreateCategoryDto): Promise<CategoryDto> {

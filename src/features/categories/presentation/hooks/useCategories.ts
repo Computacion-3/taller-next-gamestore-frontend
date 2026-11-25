@@ -21,13 +21,13 @@ import {
   setCategoriesError,
   setCategoriesLoading,
   setCategoryDetail,
+  setGameCategories,
 } from '../store/categories.slice';
 
 export function useCategories() {
   const dispatch = useAppDispatch();
-  const { items, detail, isLoading, error } = useAppSelector(
-    (root) => root.categories,
-  );
+  const { items, detail, gameCategories: gameCategoriesRecord, isLoading, error } =
+    useAppSelector((root) => root.categories);
 
   const categories = useMemo(() => items.map(deserializeCategory), [items]);
 
@@ -40,6 +40,17 @@ export function useCategories() {
           }
         : null,
     [detail],
+  );
+
+  const gameCategories = useMemo(
+    () =>
+      gameCategoriesRecord
+        ? {
+            gameId: gameCategoriesRecord.gameId,
+            items: gameCategoriesRecord.items.map(deserializeCategory),
+          }
+        : null,
+    [gameCategoriesRecord],
   );
 
   const fetchCategories = useCallback(async () => {
@@ -73,6 +84,19 @@ export function useCategories() {
             err instanceof Error ? err.message : 'Error al cargar la categoría.',
           ),
         );
+      }
+    },
+    [dispatch],
+  );
+
+  const fetchGameCategories = useCallback(
+    async (gameId: string) => {
+      try {
+        const result = await categoriesContainer.getGameCategoriesUseCase.execute(gameId);
+        dispatch(setGameCategories({ gameId, items: result.map(serializeCategory) }));
+      } catch {
+        // Sin categorías el detalle igual se muestra; solo no aparecen los chips
+        dispatch(setGameCategories({ gameId, items: [] }));
       }
     },
     [dispatch],
@@ -114,5 +138,7 @@ export function useCategories() {
     createCategory,
     updateCategory,
     deleteCategory,
+    gameCategories,
+    fetchGameCategories,
   };
 }

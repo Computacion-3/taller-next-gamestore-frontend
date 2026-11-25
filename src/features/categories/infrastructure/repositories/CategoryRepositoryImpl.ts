@@ -27,6 +27,11 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return dtos.map(GameMapper.toDomain);
   }
 
+  async getByGame(gameId: string): Promise<Category[]> {
+    const dtos = await this.datasource.getByGame(gameId);
+    return dtos.map(CategoryMapper.toDomain);
+  }
+
   async create(params: CreateCategoryParams): Promise<Category> {
     const dto = await this.datasource.create(CategoryMapper.toCreateDto(params));
     return CategoryMapper.toDomain(dto);
