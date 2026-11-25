@@ -1,9 +1,15 @@
 import { Game } from '../../domain/entities/Game';
 import {
   CreateGameParams,
+  PaginatedGames,
   UpdateGameParams,
 } from '../../domain/repositories/GameRepository';
-import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
+import {
+  CreateGameDto,
+  GameDto,
+  PaginatedGamesDto,
+  UpdateGameDto,
+} from '../dtos/GameDto';
 
 export class GameMapper {
   static toDomain(dto: GameDto): Game {
@@ -21,6 +27,16 @@ export class GameMapper {
       createdAt: dto.createdAt ? new Date(dto.createdAt) : undefined,
       updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : undefined,
     });
+  }
+
+  static toPaginatedDomain(dto: PaginatedGamesDto): PaginatedGames {
+    return {
+      items: dto.items.map(GameMapper.toDomain),
+      total: Number(dto.total),
+      page: Number(dto.page),
+      limit: Number(dto.limit),
+      totalPages: Number(dto.totalPages),
+    };
   }
 
   static toDto(entity: Game): GameDto {
@@ -49,21 +65,29 @@ export class GameMapper {
       developer: params.developer,
       releaseDate: params.releaseDate.toISOString().split('T')[0],
       ...(params.coverImage ? { coverImage: params.coverImage } : {}),
-      ...(params.categoryIds !== undefined && { categoryIds: params.categoryIds }),
+      ...(params.categoryIds !== undefined && {
+        categoryIds: params.categoryIds,
+      }),
     };
   }
 
   static toUpdateDto(params: UpdateGameParams): UpdateGameDto {
     return {
       ...(params.title !== undefined && { title: params.title }),
-      ...(params.description !== undefined && { description: params.description }),
-      ...(params.originalPrice !== undefined && { price: params.originalPrice }),
+      ...(params.description !== undefined && {
+        description: params.description,
+      }),
+      ...(params.originalPrice !== undefined && {
+        price: params.originalPrice,
+      }),
       ...(params.developer !== undefined && { developer: params.developer }),
       ...(params.releaseDate !== undefined && {
         releaseDate: params.releaseDate.toISOString().split('T')[0],
       }),
       ...(params.coverImage ? { coverImage: params.coverImage } : {}),
-      ...(params.categoryIds !== undefined && { categoryIds: params.categoryIds }),
+      ...(params.categoryIds !== undefined && {
+        categoryIds: params.categoryIds,
+      }),
     };
   }
 }

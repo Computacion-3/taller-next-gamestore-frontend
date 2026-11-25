@@ -1,5 +1,10 @@
 import { GetGamesParams } from '../../domain/repositories/GameRepository';
-import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
+import {
+  CreateGameDto,
+  GameDto,
+  PaginatedGamesDto,
+  UpdateGameDto,
+} from '../dtos/GameDto';
 import { GameDatasource } from './GameDatasource';
 
 const GAME_FIELDS = `
@@ -21,7 +26,7 @@ export class GameGraphQLDatasource implements GameDatasource {
   private readonly endpoint: string;
 
   constructor(
-    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000',
     private readonly getToken?: () => string | null,
   ) {
     this.endpoint = `${baseUrl.replace(/\/$/, '')}/graphql`;
@@ -65,11 +70,17 @@ export class GameGraphQLDatasource implements GameDatasource {
     return json.data;
   }
 
-  async getAll(params?: GetGamesParams): Promise<GameDto[]> {
-    const data = await this.request<{ games: GameDto[] }>(
+  async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
+    const data = await this.request<{ games: PaginatedGamesDto }>(
       `query GetGames($search: String, $categoryId: String, $page: Int, $limit: Int) {
         games(search: $search, categoryId: $categoryId, page: $page, limit: $limit) {
-          ${GAME_FIELDS}
+          items {
+            ${GAME_FIELDS}
+          }
+          total
+          page
+          limit
+          totalPages
         }
       }`,
       params ? { ...params } : undefined,

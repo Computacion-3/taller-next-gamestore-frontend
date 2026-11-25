@@ -11,7 +11,7 @@ export class AuthRestDatasource implements AuthDatasource {
   private readonly baseUrl: string;
 
   constructor(
-    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000',
     private readonly getToken?: () => string | null,
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
