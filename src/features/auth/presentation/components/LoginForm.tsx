@@ -34,12 +34,12 @@ export function LoginForm() {
   const activeError = validationError ?? error;
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl">
+    <div className="w-full max-w-md rounded-2xl border border-blue-sky/50 bg-blue-night/80 p-8 shadow-2xl backdrop-blur-md">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-white">
+        <h1 className="text-2xl font-extrabold tracking-tight text-white">
           Iniciar Sesión
         </h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-blue-cloud/85">
           Ingresa a tu cuenta de GameStore
         </p>
       </div>
@@ -47,7 +47,7 @@ export function LoginForm() {
       {activeError && (
         <div
           role="alert"
-          className="mb-4 rounded-lg border border-red-500/40 bg-red-950/60 px-4 py-3 text-sm text-red-200"
+          className="mb-4 rounded-lg border border-red-400/50 bg-red-950/75 px-4 py-3 text-sm text-red-100"
         >
           {activeError}
         </div>
@@ -57,7 +57,7 @@ export function LoginForm() {
         <div>
           <label
             htmlFor="login-email"
-            className="block text-sm font-medium text-slate-300"
+            className="block text-sm font-medium text-blue-cloud"
           >
             Correo electrónico o usuario
           </label>
@@ -66,16 +66,16 @@ export function LoginForm() {
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@store.com o client@store.com"
+            placeholder="admin@gamestore.com o ana@gamestore.com"
             autoComplete="username"
-            className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="mt-1.5 w-full rounded-lg border border-blue-sky/40 bg-blue-cloud/95 px-3.5 py-2.5 text-sm font-medium text-blue-night placeholder-blue-night/45 focus:border-blue-star focus:outline-none focus:ring-2 focus:ring-blue-star"
           />
         </div>
 
         <div>
           <label
             htmlFor="login-password"
-            className="block text-sm font-medium text-slate-300"
+            className="block text-sm font-medium text-blue-cloud"
           >
             Contraseña
           </label>
@@ -86,24 +86,24 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             autoComplete="current-password"
-            className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="mt-1.5 w-full rounded-lg border border-blue-sky/40 bg-blue-cloud/95 px-3.5 py-2.5 text-sm font-medium text-blue-night placeholder-blue-night/45 focus:border-blue-star focus:outline-none focus:ring-2 focus:ring-blue-star"
           />
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-2 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-2 w-full rounded-lg bg-blue-sky px-4 py-2.5 text-sm font-bold text-blue-night shadow transition hover:bg-blue-star hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? 'Verificando credenciales...' : 'Entrar a la tienda'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-400">
+      <p className="mt-6 text-center text-sm text-blue-cloud/85">
         ¿No tienes cuenta?{' '}
         <Link
           href="/register"
-          className="font-semibold text-emerald-400 hover:text-emerald-300"
+          className="font-semibold text-blue-sky transition hover:text-blue-star"
         >
           Regístrate gratis
         </Link>

@@ -17,4 +17,6 @@ export interface AuthRepository {
   getProfile(): Promise<AuthUser>;
   getToken(): string | null;
   getStoredSession(): AuthSession | null;
+  /** Guarda en el almacenamiento local los datos actualizados del usuario con sesión. */
+  saveSessionUser(user: AuthUser): void;
 }

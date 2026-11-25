@@ -50,17 +50,28 @@ export function deserializeGame(record: GameRecord): Game {
   });
 }
 
+export interface GamesPagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface GamesState {
   items: GameRecord[];
+  pagination: GamesPagination;
   isLoading: boolean;
   error: string | null;
 }
 
 export const initialGamesState: GamesState = {
   items: [],
+  pagination: { total: 0, page: 1, limit: 12, totalPages: 0 },
   isLoading: false,
   error: null,
 };
+
+type GamesPagePayload = GamesPagination & { items: GameRecord[] };
 
 const gamesSlice = createSlice({
   name: 'games',
@@ -72,13 +83,16 @@ const gamesSlice = createSlice({
         state.error = null;
       }
     },
-    setGames(state, action: PayloadAction<GameRecord[]>) {
-      state.items = action.payload;
+    setGamesPage(state, action: PayloadAction<GamesPagePayload>) {
+      const { items, ...pagination } = action.payload;
+      state.items = items;
+      state.pagination = pagination;
       state.isLoading = false;
       state.error = null;
     },
     addGame(state, action: PayloadAction<GameRecord>) {
       state.items.unshift(action.payload);
+      state.pagination.total += 1;
     },
     replaceGame(state, action: PayloadAction<GameRecord>) {
       state.items = state.items.map((item) =>
@@ -87,6 +101,7 @@ const gamesSlice = createSlice({
     },
     removeGame(state, action: PayloadAction<string>) {
       state.items = state.items.filter((item) => item.id !== action.payload);
+      state.pagination.total = Math.max(0, state.pagination.total - 1);
     },
     setGamesError(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
@@ -100,7 +115,7 @@ const gamesSlice = createSlice({
 
 export const {
   setGamesLoading,
-  setGames,
+  setGamesPage,
   addGame,
   replaceGame,
   removeGame,
