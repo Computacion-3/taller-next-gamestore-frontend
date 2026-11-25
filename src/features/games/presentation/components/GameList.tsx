@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Game } from '../../domain/entities/Game';
 import { GameCard } from './GameCard';
 
@@ -5,9 +6,10 @@ export interface GameListProps {
   games: Game[];
   isLoading?: boolean;
   error?: string | null;
+  renderActions?: (game: Game) => ReactNode;
 }
 
-export function GameList({ games, isLoading, error }: GameListProps) {
+export function GameList({ games, isLoading, error, renderActions }: GameListProps) {
   if (isLoading) {
     return <p className="text-sm text-slate-400">Cargando catálogo...</p>;
   }
@@ -25,7 +27,7 @@ export function GameList({ games, isLoading, error }: GameListProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {games.map((game) => (
-        <GameCard key={game.id} game={game} />
+                <GameCard key={game.id} game={game} actions={renderActions?.(game)} />
       ))}
     </div>
   );

@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/features/auth/presentation/hooks/useAuth';
+import { useEffect } from 'react';
+import { LoginRequired } from '@/features/auth/presentation/components/LoginRequired';
+import { useSessionReady } from '@/features/auth/presentation/hooks/useSessionReady';
+import { AddToWishlistButton } from '@/features/wishlist/presentation/components/AddToWishlistButton';
+import { useWishlist } from '@/features/wishlist/presentation/hooks/useWishlist';
 import { Pagination } from '@/shared/presentation/components/Pagination';
-import { useIsClient } from '@/shared/presentation/hooks/useIsClient';
 import { useGames } from '../hooks/useGames';
 import { GameList } from './GameList';
 
@@ -19,9 +22,8 @@ export function GameCatalog() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { isAuthenticated, hydrated } = useAuth();
-  const isClient = useIsClient();
-  const sessionReady = isClient && hydrated;
+  const { sessionReady, isAuthenticated } = useSessionReady();
+  const canLoad = sessionReady && isAuthenticated;
 
   // La URL es la fuente de verdad: /?search=dragon&page=2
   const search = searchParams.get('search')?.trim() || undefined;
@@ -29,8 +31,16 @@ export function GameCatalog() {
 
   const { games, pagination, isLoading, error } = useGames(
     { search, page, limit: ITEMS_PER_PAGE },
-    { enabled: sessionReady && isAuthenticated },
+    { enabled: canLoad },
   );
+  const { fetchWishlist } = useWishlist();
+
+  // Se carga la wishlist para marcar los juegos que ya están guardados
+  useEffect(() => {
+    if (canLoad) {
+      void fetchWishlist();
+    }
+  }, [canLoad, fetchWishlist]);
 
   const handlePageChange = (nextPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -44,14 +54,7 @@ export function GameCatalog() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <p className="text-sm text-slate-100 drop-shadow">
-        <Link href="/login" className="font-semibold underline">
-          Inicia sesión
-        </Link>{' '}
-        para consultar el catálogo protegido por JWT.
-      </p>
-    );
+    return <LoginRequired message="Inicia sesión para consultar el catálogo protegido por JWT." />;
   }
 
   return (
@@ -66,7 +69,12 @@ export function GameCatalog() {
         </p>
       )}
 
-      <GameList games={games} isLoading={isLoading} error={error} />
+      <GameList
+        games={games}
+        isLoading={isLoading}
+        error={error}
+        renderActions={(game) => <AddToWishlistButton game={game} />}
+      />
 
       {!isLoading && !error && (
         <Pagination
