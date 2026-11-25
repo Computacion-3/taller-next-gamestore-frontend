@@ -24,6 +24,12 @@ export class AddWishlistItemUseCase {
     if (!params.gameId) {
       throw new Error('El identificador del videojuego es obligatorio.');
     }
+    if (
+      params.targetPrice !== undefined &&
+      (!Number.isFinite(params.targetPrice) || params.targetPrice < 0)
+    ) {
+      throw new Error('El precio objetivo debe ser un número mayor o igual a 0.');
+    }
     return this.repository.add(params);
   }
 }

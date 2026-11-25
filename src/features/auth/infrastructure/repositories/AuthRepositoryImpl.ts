@@ -92,4 +92,12 @@ export class AuthRepositoryImpl implements AuthRepository {
       user: AuthMapper.userToDomain({ ...userDto, role: claims.role }),
     };
   }
+
+  updateStoredWalletBalance(balance: number): AuthUser | null {
+    const stored = this.storage.getUser();
+    if (!stored) return null;
+    const user = AuthMapper.userToDomain({ ...stored, walletBalance: balance });
+    this.storage.setUser(AuthMapper.userToDto(user));
+    return user;
+  }
 }

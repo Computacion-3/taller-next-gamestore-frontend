@@ -27,6 +27,7 @@ interface RouteRule {
 }
 
 const PRIVATE_ROUTES: RouteRule[] = [
+  { prefix: '/admin', authority: 'games:create' },
   { prefix: '/library' },
   { prefix: '/wishlist' },
   { prefix: '/purchases' },
@@ -92,6 +93,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/admin/:path*',
     '/library/:path*',
     '/wishlist/:path*',
     '/purchases/:path*',

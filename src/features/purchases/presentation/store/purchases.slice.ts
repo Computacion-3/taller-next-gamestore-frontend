@@ -50,13 +50,19 @@ export function deserializePurchase(record: PurchaseRecord): Purchase {
 }
 
 export interface PurchasesState {
+  /** Compras del usuario con sesión (GET /purchases/me). */
   items: PurchaseRecord[];
+  /** Todas las compras de la tienda (GET /purchases, solo admin). */
+  allItems: PurchaseRecord[];
+  selected: PurchaseRecord | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: PurchasesState = {
   items: [],
+  allItems: [],
+  selected: null,
   isLoading: false,
   error: null,
 };
@@ -74,8 +80,18 @@ const purchasesSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    setAllPurchases(state, action: PayloadAction<PurchaseRecord[]>) {
+      state.allItems = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    },
     addPurchase(state, action: PayloadAction<PurchaseRecord>) {
       state.items.unshift(action.payload);
+    },
+    setSelectedPurchase(state, action: PayloadAction<PurchaseRecord | null>) {
+      state.selected = action.payload;
+      state.isLoading = false;
+      state.error = null;
     },
     setPurchasesError(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
@@ -90,7 +106,9 @@ const purchasesSlice = createSlice({
 export const {
   setPurchasesLoading,
   setPurchases,
+  setAllPurchases,
   addPurchase,
+  setSelectedPurchase,
   setPurchasesError,
   resetPurchasesState,
 } = purchasesSlice.actions;

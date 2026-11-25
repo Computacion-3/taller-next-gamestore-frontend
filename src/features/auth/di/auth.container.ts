@@ -4,6 +4,7 @@ import { LoginUseCase } from '../domain/usecases/LoginUseCase';
 import { LogoutUseCase } from '../domain/usecases/LogoutUseCase';
 import { RegisterUseCase } from '../domain/usecases/RegisterUseCase';
 import { SaveSessionUserUseCase } from '../domain/usecases/SaveSessionUserUseCase';
+import { UpdateWalletBalanceUseCase } from '../domain/usecases/UpdateWalletBalanceUseCase';
 import { AuthRestDatasource } from '../infrastructure/datasources/AuthRestDatasource';
 import { AuthRepositoryImpl } from '../infrastructure/repositories/AuthRepositoryImpl';
 import { tokenStorage } from '../infrastructure/storage/tokenStorage';
@@ -21,5 +22,6 @@ export const authContainer = {
   getProfileUseCase: new GetProfileUseCase(authRepository),
   getStoredSessionUseCase: new GetStoredSessionUseCase(authRepository),
   saveSessionUserUseCase: new SaveSessionUserUseCase(authRepository),
+  updateWalletBalanceUseCase: new UpdateWalletBalanceUseCase(authRepository),
   authRepository,
 };

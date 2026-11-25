@@ -59,10 +59,16 @@ export function useUsers() {
     return usersContainer.changeMyPasswordUseCase.execute(params);
   }, []);
 
+  const getMyAccount = useCallback(
+    () => usersContainer.getMyAccountUseCase.execute(),
+    [],
+  );
+
   return {
     users,
     isLoading,
     error,
+    getMyAccount,
     fetchUsers,
     updateUserRole,
     getMyProfile,

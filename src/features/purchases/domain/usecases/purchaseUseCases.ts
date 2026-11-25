@@ -27,3 +27,13 @@ export class GetAllPurchasesUseCase {
     return this.repository.getAll();
   }
 }
+
+export class GetPurchaseByIdUseCase {
+  constructor(private readonly repository: PurchaseRepository) {}
+  execute(id: string): Promise<Purchase> {
+    if (!id || id.trim().length === 0) {
+      throw new Error('El identificador de la compra es obligatorio.');
+    }
+    return this.repository.getById(id);
+  }
+}

@@ -28,14 +28,22 @@ export function deserializeLibraryItem(record: LibraryRecord): LibraryItem {
   });
 }
 
+/** Biblioteca de otro usuario consultada por un admin. */
+export interface UserLibraryRecord {
+  userId: string;
+  items: LibraryRecord[];
+}
+
 export interface LibraryState {
   items: LibraryRecord[];
+  userLibrary: UserLibraryRecord | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: LibraryState = {
   items: [],
+  userLibrary: null,
   isLoading: false,
   error: null,
 };
@@ -53,6 +61,11 @@ const librarySlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    setUserLibrary(state, action: PayloadAction<UserLibraryRecord>) {
+      state.userLibrary = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    },
     setLibraryError(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
       state.error = action.payload;
@@ -66,6 +79,7 @@ const librarySlice = createSlice({
 export const {
   setLibraryLoading,
   setLibraryItems,
+  setUserLibrary,
   setLibraryError,
   resetLibraryState,
 } = librarySlice.actions;

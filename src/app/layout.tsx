@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Toaster } from "@/shared/presentation/components/Toaster";
 import { RealtimeBridge } from "@/features/realtime/presentation/components/RealtimeBridge";
 import { Geist, Geist_Mono } from "next/font/google";
 import { StoreProvider } from "@/shared/store/StoreProvider";
 import { Header } from "@/shared/presentation/components/Header";
+import { HeaderFallback } from "@/shared/presentation/components/HeaderFallback";
 import { Footer } from "@/shared/presentation/components/Footer";
 import "./globals.css";
 
@@ -32,7 +34,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100">
         <StoreProvider>
           <RealtimeBridge />
-          <Header />
+          <Suspense fallback={<HeaderFallback />}>
+            <Header />
+          </Suspense>
           <div className="flex flex-1 flex-col">{children}</div>
           <Footer />
           <Toaster />
