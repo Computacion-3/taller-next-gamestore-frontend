@@ -23,6 +23,12 @@ export function useWishlist() {
 
   const wishlist = useMemo(() => items.map(deserializeWishlistItem), [items]);
 
+  // Ids de los juegos guardados, para marcar en el catálogo los que ya están en la lista
+  const wishlistGameIds = useMemo(
+    () => new Set(items.map((item) => item.game.id)),
+    [items],
+  );  
+
   const fetchWishlist = useCallback(async () => {
     dispatch(setWishlistLoading(true));
     try {
@@ -61,6 +67,7 @@ export function useWishlist() {
 
   return {
     wishlist,
+    wishlistGameIds,
     alerts,
     isLoading,
     error,

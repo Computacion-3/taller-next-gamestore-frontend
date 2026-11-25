@@ -73,6 +73,10 @@ const wishlistSlice = createSlice({
     },
     removeWishlistRecord(state, action: PayloadAction<string>) {
       state.items = state.items.filter((item) => item.id !== action.payload);
+      // La alerta de un juego que ya no está en la lista deja de tener sentido
+      state.alerts = state.alerts.filter(
+        (alert) => alert.wishlistItemId !== action.payload,
+      );
     },
     setWishlistError(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
