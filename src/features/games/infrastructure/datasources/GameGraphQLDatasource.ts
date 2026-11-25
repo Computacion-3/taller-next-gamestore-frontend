@@ -70,7 +70,7 @@ export class GameGraphQLDatasource implements GameDatasource {
     return json.data;
   }
 
-    async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
+  async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
     const data = await this.request<{ games: PaginatedGamesDto }>(
       `query GetGames($search: String, $categoryId: String, $page: Int, $limit: Int) {
         games(search: $search, categoryId: $categoryId, page: $page, limit: $limit) {

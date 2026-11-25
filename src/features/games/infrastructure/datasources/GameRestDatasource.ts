@@ -28,7 +28,7 @@ export class GameRestDatasource implements GameDatasource {
     return headers;
   }
 
-    async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
+  async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
     const query = new URLSearchParams();
     if (params?.page !== undefined) query.set('page', String(params.page));
     if (params?.limit !== undefined) query.set('limit', String(params.limit));
@@ -57,7 +57,9 @@ export class GameRestDatasource implements GameDatasource {
     });
 
     if (!response.ok) {
-      throw new Error(`Error REST al obtener videojuego ${id} (${response.status})`);
+      throw new Error(
+        `Error REST al obtener videojuego ${id} (${response.status})`,
+      );
     }
 
     return response.json();
@@ -85,7 +87,9 @@ export class GameRestDatasource implements GameDatasource {
     });
 
     if (!response.ok) {
-      throw new Error(`Error REST al actualizar videojuego ${id} (${response.status})`);
+      throw new Error(
+        `Error REST al actualizar videojuego ${id} (${response.status})`,
+      );
     }
 
     return response.json();
@@ -99,7 +103,9 @@ export class GameRestDatasource implements GameDatasource {
     });
 
     if (!response.ok) {
-      throw new Error(`Error REST al actualizar descuento de ${id} (${response.status})`);
+      throw new Error(
+        `Error REST al actualizar descuento de ${id} (${response.status})`,
+      );
     }
 
     return response.json();
@@ -112,7 +118,9 @@ export class GameRestDatasource implements GameDatasource {
     });
 
     if (!response.ok) {
-      throw new Error(`Error REST al eliminar videojuego ${id} (${response.status})`);
+      throw new Error(
+        `Error REST al eliminar videojuego ${id} (${response.status})`,
+      );
     }
   }
 }

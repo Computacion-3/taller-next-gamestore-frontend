@@ -39,7 +39,7 @@ export class GameRepositoryImpl implements GameRepository {
         : this.restDatasource;
   }
 
-    async getAll(params?: GetGamesParams): Promise<PaginatedGames> {
+  async getAll(params?: GetGamesParams): Promise<PaginatedGames> {
     const dto = await this.activeDatasource.getAll(params);
     return GameMapper.toPaginatedDomain(dto);
   }
