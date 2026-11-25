@@ -53,8 +53,12 @@ export class AuthRepositoryImpl implements AuthRepository {
     const claims = decodeJwtClaims(this.storage.getToken());
     // /auth/profile devuelve los datos del JWT (sin saldo): se conserva el
     // saldo guardado y el rol se lee del token.
+    // El correo del token queda desactualizado si el usuario lo cambió después
+    // de iniciar sesión: se conserva el guardado si es la misma cuenta.
+    const sameAccount = stored !== null && stored.id === dto.user.id;
     const user = AuthMapper.userToDomain({
       ...dto.user,
+      email: sameAccount ? stored.email : dto.user.email,
       role: claims?.role ?? dto.user.role,
       walletBalance: dto.user.walletBalance ?? stored?.walletBalance,
     });
@@ -64,6 +68,10 @@ export class AuthRepositoryImpl implements AuthRepository {
 
   getToken(): string | null {
     return this.storage.getToken();
+  }
+
+  saveSessionUser(user: AuthUser): void {
+    this.storage.setUser(AuthMapper.userToDto(user));
   }
 
   getStoredSession(): AuthSession | null {

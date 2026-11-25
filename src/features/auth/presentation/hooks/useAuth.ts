@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
+import { HttpError } from '@/shared/infrastructure/http/httpClient';
 import { useToasts } from '@/shared/presentation/hooks/useToasts';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { selectAuth } from '@/shared/store/selectors';
@@ -34,6 +35,25 @@ function getSafeRedirect(): string {
   return '/';
 }
 
+/**
+ * Al abrir la app se confirma con el backend (GET /auth/profile) que el token
+ * guardado sigue siendo válido. Solo se hace una vez por carga de página.
+ * Únicamente un 401 cierra la sesión: un error de red no debe sacar al usuario.
+ */
+let sessionVerificationStarted = false;
+
+async function verifyStoredSession(onInvalid: () => void): Promise<void> {
+  if (sessionVerificationStarted) return;
+  sessionVerificationStarted = true;
+  try {
+    await authContainer.getProfileUseCase.execute();
+  } catch (err) {
+    if (err instanceof HttpError && err.status === 401) {
+      onInvalid();
+    }
+  }
+}
+
 function toUserProps(user: AuthUser): AuthUserProps {
   return {
     id: user.id,
@@ -59,11 +79,25 @@ export function useAuth() {
             user: toUserProps(stored.user),
           }),
         );
+        void verifyStoredSession(() => {
+          // El token ya no sirve en el backend: se limpia la sesión local.
+          void authContainer.logoutUseCase
+            .execute()
+            .catch(() => undefined)
+            .finally(() => {
+              dispatch(resetAuthState());
+              notify(
+                'info',
+                'Sesión expirada',
+                'Vuelve a iniciar sesión para continuar.',
+              );
+            });
+        });
       } else {
         dispatch(setAuthHydrated(true));
       }
     }
-  }, [dispatch, state.hydrated]);
+  }, [dispatch, notify, state.hydrated]);
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
@@ -122,6 +156,15 @@ export function useAuth() {
     return profile;
   }, [dispatch]);
 
+  /** Actualiza el usuario en el store y en el almacenamiento (p. ej. tras cambiar el correo). */
+  const updateSessionUser = useCallback(
+    (props: AuthUserProps) => {
+      authContainer.saveSessionUserUseCase.execute(new AuthUser(props));
+      dispatch(setAuthUser(props));
+    },
+    [dispatch],
+  );
+
   const logout = useCallback(async () => {
     dispatch(setAuthLoading(true));
     try {
@@ -157,6 +200,7 @@ export function useAuth() {
     login,
     register,
     refreshProfile,
+    updateSessionUser,
     logout,
     clearError,
   };
