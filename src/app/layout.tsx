@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Toaster } from "@/shared/presentation/components/Toaster";
+import { RealtimeBridge } from "@/features/realtime/presentation/components/RealtimeBridge";
 import { Geist, Geist_Mono } from "next/font/google";
 import { StoreProvider } from "@/shared/store/StoreProvider";
 import { Header } from "@/shared/presentation/components/Header";
@@ -29,9 +31,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100">
         <StoreProvider>
+          <RealtimeBridge />
           <Header />
           <div className="flex flex-1 flex-col">{children}</div>
           <Footer />
+          <Toaster />
         </StoreProvider>
       </body>
     </html>
