@@ -1,16 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoginRequired } from '@/features/auth/presentation/components/LoginRequired';
 import { useSessionReady } from '@/features/auth/presentation/hooks/useSessionReady';
-import { AddToWishlistButton } from '@/features/wishlist/presentation/components/AddToWishlistButton';
-import { useWishlist } from '@/features/wishlist/presentation/hooks/useWishlist';
-import { useLibrary } from '@/features/library/presentation/hooks/useLibrary';
-import { BuyGameButton } from '@/features/purchases/presentation/components/BuyGameButton';
+import { useCategories } from '@/features/categories/presentation/hooks/useCategories';
 import { Pagination } from '@/shared/presentation/components/Pagination';
 import { useGames } from '../hooks/useGames';
+import { useMyCollections } from '../hooks/useMyCollections';
+import { CatalogFilters } from './CatalogFilters';
+import { GameActions } from './GameActions';
 import { GameList } from './GameList';
 
 const ITEMS_PER_PAGE = 6;
@@ -27,25 +26,39 @@ export function GameCatalog() {
   const { sessionReady, isAuthenticated } = useSessionReady();
   const canLoad = sessionReady && isAuthenticated;
 
-  // La URL es la fuente de verdad: /?search=dragon&page=2
-  const search = searchParams.get('search')?.trim() || undefined;
+  // La URL es la fuente de verdad: /?search=dragon&categoryId=<uuid>&page=2
+  const search = searchParams.get('search')?.trim() ?? '';
+  const categoryId = searchParams.get('categoryId') ?? '';
   const page = parsePage(searchParams.get('page'));
 
   const { games, pagination, isLoading, error } = useGames(
-    { search, page, limit: ITEMS_PER_PAGE },
+    {
+      search: search || undefined,
+      categoryId: categoryId || undefined,
+      page,
+      limit: ITEMS_PER_PAGE,
+    },
     { enabled: canLoad },
   );
-  const { fetchWishlist } = useWishlist();
+  const { categories, fetchCategories } = useCategories();
+  useMyCollections(canLoad);
 
-  const { ownedGameIds, fetchMyLibrary } = useLibrary();
-
-  // Wishlist y biblioteca: para marcar qué juegos ya están guardados o comprados
   useEffect(() => {
-    if (canLoad) {
-      void fetchWishlist();
-      void fetchMyLibrary();
+    if (canLoad) void fetchCategories();
+  }, [canLoad, fetchCategories]);
+
+  /** Cambia los filtros en la URL. Al filtrar se vuelve a la página 1. */
+  const updateFilters = (changes: Record<string, string>) => {
+    // Se lee la URL actual (y no la del último render) por si cambió durante el debounce
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, value] of Object.entries(changes)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
     }
-  }, [canLoad, fetchWishlist, fetchMyLibrary]);
+    params.delete('page');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
 
   const handlePageChange = (nextPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -62,15 +75,22 @@ export function GameCatalog() {
     return <LoginRequired message="Inicia sesión para consultar el catálogo protegido por JWT." />;
   }
 
+  const hasFilters = Boolean(search || categoryId);
+
   return (
     <>
-      {search && (
-        <p className="mb-4 text-sm text-slate-100 drop-shadow">
-          {pagination.total} resultado(s) para{' '}
-          <span className="font-semibold">&quot;{search}&quot;</span> ·{' '}
-          <Link href={pathname} className="underline">
-            Limpiar búsqueda
-          </Link>
+      <CatalogFilters
+        search={search}
+        categoryId={categoryId}
+        categories={categories}
+        onSearchChange={(value) => updateFilters({ search: value })}
+        onCategoryChange={(value) => updateFilters({ categoryId: value })}
+        onClear={() => router.replace(pathname, { scroll: false })}
+      />
+
+      {hasFilters && !isLoading && !error && (
+        <p className="mb-4 text-sm text-slate-100 drop-shadow" aria-live="polite">
+          {pagination.total} resultado(s)
         </p>
       )}
 
@@ -78,12 +98,7 @@ export function GameCatalog() {
         games={games}
         isLoading={isLoading}
         error={error}
-        renderActions={(game) => (
-          <div className="flex flex-col items-start gap-2">
-            <BuyGameButton game={game} />
-            {!ownedGameIds.has(game.id) && <AddToWishlistButton game={game} />}
-          </div>
-        )}
+        renderActions={(game) => <GameActions game={game} />}
       />
 
       {!isLoading && !error && (
