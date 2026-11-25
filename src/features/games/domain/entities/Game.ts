@@ -55,4 +55,9 @@ export class Game {
   get hasDiscount(): boolean {
     return this.discount > 0;
   }
+    /** Precio final con otro descuento (misma fórmula y redondeo del backend). */
+  priceWithDiscount(discount: number): number {
+    const value = this.originalPrice * (1 - discount / 100);
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+  }
 }
