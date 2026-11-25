@@ -102,6 +102,30 @@ export function useCategories() {
     [dispatch],
   );
 
+  const assignCategoryToGame = useCallback(
+    async (gameId: string, categoryId: string) => {
+      await categoriesContainer.assignCategoryToGameUseCase.execute(gameId, categoryId);
+      await fetchGameCategories(gameId);
+    },
+    [fetchGameCategories],
+  );
+
+  const removeCategoryFromGame = useCallback(
+    async (gameId: string, categoryId: string) => {
+      await categoriesContainer.removeCategoryFromGameUseCase.execute(gameId, categoryId);
+      await fetchGameCategories(gameId);
+    },
+    [fetchGameCategories],
+  );
+
+  const replaceGameCategories = useCallback(
+    async (gameId: string, categoryIds: string[]) => {
+      const result = await categoriesContainer.setGameCategoriesUseCase.execute(gameId, categoryIds);
+      dispatch(setGameCategories({ gameId, items: result.map(serializeCategory) }));
+    },
+    [dispatch],
+  );
+
   const createCategory = useCallback(
     async (params: CreateCategoryParams) => {
       const created = await categoriesContainer.createCategoryUseCase.execute(params);
@@ -140,5 +164,8 @@ export function useCategories() {
     deleteCategory,
     gameCategories,
     fetchGameCategories,
+    assignCategoryToGame,
+    removeCategoryFromGame,
+    replaceGameCategories,
   };
 }
