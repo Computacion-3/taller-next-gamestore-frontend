@@ -83,7 +83,7 @@ describe('Control de acceso por sesión y roles', () => {
       cy.getCookie(TOKEN_KEY).should('not.exist');
     });
 
-    it('un token falsificado con rol admin no obtiene datos: el backend responde 401', () => {
+    it('un token falsificado con rol admin no obtiene datos: el backend lo rechaza (401) y se cierra la sesión', () => {
       const forged = fakeJwt({
         sub: 'x',
         email: 'falso@store.com',
@@ -100,9 +100,12 @@ describe('Control de acceso por sesión y roles', () => {
           );
         },
       });
-      // La interfaz puede abrirse, pero la seguridad real está en el backend.
-      cy.contains('[role="alert"]', /Token inválido|expirado/i);
+      // El proxy solo decodifica el token; la seguridad real está en el backend.
+      // Al abrir la app se valida con GET /auth/profile y, al recibir 401,
+      // la sesión se limpia: nunca se listan usuarios.
+      cy.get('[data-testid="access-denied"]').should('contain', '401');
       cy.get('[data-testid="users-table"]').should('not.exist');
+      cy.getCookie(TOKEN_KEY).should('not.exist');
     });
   });
 });
