@@ -9,9 +9,10 @@ export interface AdminGamesTableProps {
   onEdit: (game: Game) => void;
   onDiscount: (game: Game) => void;
   onRemove: (game: Game) => void;
+  onCategories: (game: Game) => void;
 }
 
-export function AdminGamesTable({ games, onEdit, onDiscount, onRemove }: AdminGamesTableProps) {
+export function AdminGamesTable({ games, onEdit, onDiscount, onCategories, onRemove }: AdminGamesTableProps) {
   return (
     <div className="overflow-x-auto rounded-2xl border border-blue-sky/40 bg-blue-night/80 backdrop-blur-md">
       <table data-testid="admin-games-table" className="w-full text-left text-sm">
@@ -62,6 +63,16 @@ export function AdminGamesTable({ games, onEdit, onDiscount, onRemove }: AdminGa
                       data-testid={`discount-${game.id}`}
                     >
                       Descuento
+                    </Button>
+                  </Can>
+                  <Can authority="categories:manage">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => onCategories(game)}
+                      data-testid={`categories-${game.id}`}
+                    >
+                      Categorías
                     </Button>
                   </Can>
                   <Can authority="games:delete">
