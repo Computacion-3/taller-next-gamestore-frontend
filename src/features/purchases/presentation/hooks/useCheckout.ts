@@ -14,21 +14,27 @@ import { usePurchases } from './usePurchases';
  * y avisa al usuario. Orquesta los hooks de purchases, users, auth y library.
  */
 export function useCheckout() {
-  const { user, updateWalletBalance } = useAuth();
+  const { user, updateSessionUser } = useAuth();
   const { createPurchase } = usePurchases();
   const { getMyAccount } = useUsers();
   const { fetchMyLibrary } = useLibrary();
   const { notify } = useToasts();
   const [isBuying, setIsBuying] = useState(false);
 
-  const syncWalletBalance = useCallback(async () => {
+    const syncWalletBalance = useCallback(async () => {
     try {
+      // GET /users/me devuelve el saldo real después de la compra
       const account = await getMyAccount();
-      updateWalletBalance(account.walletBalance);
+      updateSessionUser({
+        id: account.id,
+        email: account.email,
+        role: account.role,
+        walletBalance: account.walletBalance,
+      });
     } catch {
       // La compra ya quedó hecha; el saldo se corrige en el próximo inicio de sesión
     }
-  }, [getMyAccount, updateWalletBalance]);
+  }, [getMyAccount, updateSessionUser]);
 
   const buyGame = useCallback(
     async (game: Game): Promise<boolean> => {
