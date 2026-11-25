@@ -1,10 +1,13 @@
+import { ReactNode } from 'react';
 import { Game } from '../../domain/entities/Game';
 
 export interface GameCardProps {
   game: Game;
+  /** Acciones opcionales (botones) que decide el contenedor. */
+  actions?: ReactNode;
 }
 
-export function GameCard({ game }: GameCardProps) {
+export function GameCard({ game, actions }: GameCardProps) {
   return (
     <article className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 shadow-md">
       {game.coverImage && (
@@ -38,6 +41,9 @@ export function GameCard({ game }: GameCardProps) {
             ${game.price.toFixed(2)}
           </span>
         </div>
+        {actions && (
+          <div className="mt-4 border-t border-slate-800 pt-3">{actions}</div>
+        )}        
       </div>
     </article>
   );

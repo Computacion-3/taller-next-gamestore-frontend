@@ -3,6 +3,7 @@ import {
   CreatePurchaseUseCase,
   GetAllPurchasesUseCase,
   GetMyPurchasesUseCase,
+  GetPurchaseByIdUseCase,
 } from '../domain/usecases/purchaseUseCases';
 import {
   PurchaseRepositoryImpl,
@@ -18,5 +19,6 @@ export const purchasesContainer = {
   createPurchaseUseCase: new CreatePurchaseUseCase(purchaseRepository),
   getMyPurchasesUseCase: new GetMyPurchasesUseCase(purchaseRepository),
   getAllPurchasesUseCase: new GetAllPurchasesUseCase(purchaseRepository),
+  getPurchaseByIdUseCase: new GetPurchaseByIdUseCase(purchaseRepository),
   purchaseRepository,
 };

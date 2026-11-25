@@ -51,12 +51,14 @@ export function deserializePurchase(record: PurchaseRecord): Purchase {
 
 export interface PurchasesState {
   items: PurchaseRecord[];
+  selected: PurchaseRecord | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: PurchasesState = {
   items: [],
+  selected: null,
   isLoading: false,
   error: null,
 };
@@ -77,6 +79,11 @@ const purchasesSlice = createSlice({
     addPurchase(state, action: PayloadAction<PurchaseRecord>) {
       state.items.unshift(action.payload);
     },
+    setSelectedPurchase(state, action: PayloadAction<PurchaseRecord | null>) {
+      state.selected = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    },
     setPurchasesError(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
       state.error = action.payload;
@@ -93,6 +100,7 @@ export const {
   addPurchase,
   setPurchasesError,
   resetPurchasesState,
+  setSelectedPurchase,
 } = purchasesSlice.actions;
 
 export const purchasesReducer = purchasesSlice.reducer;

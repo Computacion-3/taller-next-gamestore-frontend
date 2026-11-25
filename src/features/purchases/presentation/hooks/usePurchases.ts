@@ -11,13 +11,20 @@ import {
   setPurchases,
   setPurchasesError,
   setPurchasesLoading,
+  setSelectedPurchase,
 } from '../store/purchases.slice';
 
 export function usePurchases() {
   const dispatch = useAppDispatch();
-  const { items, isLoading, error } = useAppSelector((root) => root.purchases);
+  const { items, selected, isLoading, error } = useAppSelector(
+    (root) => root.purchases,
+  );
 
   const purchases = useMemo(() => items.map(deserializePurchase), [items]);
+  const selectedPurchase = useMemo(
+    () => (selected ? deserializePurchase(selected) : null),
+    [selected],
+  );
 
   const fetchMyPurchases = useCallback(async () => {
     dispatch(setPurchasesLoading(true));
@@ -59,6 +66,23 @@ export function usePurchases() {
     [dispatch],
   );
 
+  const fetchPurchaseById = useCallback(
+    async (id: string) => {
+      dispatch(setPurchasesLoading(true));
+      try {
+        const result = await purchasesContainer.getPurchaseByIdUseCase.execute(id);
+        dispatch(setSelectedPurchase(serializePurchase(result)));
+      } catch (err) {
+        dispatch(
+          setPurchasesError(
+            err instanceof Error ? err.message : 'Error al cargar la compra.',
+          ),
+        );
+      }
+    },
+    [dispatch],
+  );
+
   return {
     purchases,
     isLoading,
@@ -66,5 +90,7 @@ export function usePurchases() {
     fetchMyPurchases,
     fetchAllPurchases,
     createPurchase,
+    selectedPurchase,
+    fetchPurchaseById,
   };
 }
