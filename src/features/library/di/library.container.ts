@@ -3,10 +3,8 @@ import {
   GetMyLibraryUseCase,
   GetUserLibraryUseCase,
 } from '../domain/usecases/libraryUseCases';
-import {
-  LibraryRepositoryImpl,
-  LibraryRestDatasource,
-} from '../infrastructure/repositories/LibraryRepositoryImpl';
+import { LibraryRestDatasource } from '../infrastructure/datasources/LibraryRestDatasource';
+import { LibraryRepositoryImpl } from '../infrastructure/repositories/LibraryRepositoryImpl';
 
 const datasource = new LibraryRestDatasource(undefined, () =>
   tokenStorage.getToken(),
