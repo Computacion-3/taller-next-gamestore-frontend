@@ -52,3 +52,13 @@ export class GetCategoryDetailUseCase {
     return { category, games };
   }
 }
+
+export class GetGameCategoriesUseCase {
+  constructor(private readonly repository: CategoryRepository) {}
+  execute(gameId: string): Promise<Category[]> {
+    if (!gameId || gameId.trim().length === 0) {
+      throw new Error('El identificador del videojuego es obligatorio.');
+    }
+    return this.repository.getByGame(gameId);
+  }
+}

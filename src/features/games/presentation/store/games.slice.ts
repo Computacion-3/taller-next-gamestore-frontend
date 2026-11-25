@@ -60,6 +60,8 @@ export interface GamesPagination {
 export interface GamesState {
   items: GameRecord[];
   pagination: GamesPagination;
+  /** Juego abierto en la página de detalle. */
+  selected: GameRecord | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -67,6 +69,7 @@ export interface GamesState {
 export const initialGamesState: GamesState = {
   items: [],
   pagination: { total: 0, page: 1, limit: 12, totalPages: 0 },
+  selected: null,
   isLoading: false,
   error: null,
 };
@@ -98,6 +101,15 @@ const gamesSlice = createSlice({
       state.items = state.items.map((item) =>
         item.id === action.payload.id ? action.payload : item,
       );
+      // Si es el juego abierto en el detalle, también se actualiza (por ejemplo, un descuento en vivo)
+      if (state.selected?.id === action.payload.id) {
+        state.selected = action.payload;
+      }
+    },
+    setSelectedGame(state, action: PayloadAction<GameRecord | null>) {
+      state.selected = action.payload;
+      state.isLoading = false;
+      state.error = null;
     },
     removeGame(state, action: PayloadAction<string>) {
       state.items = state.items.filter((item) => item.id !== action.payload);
@@ -121,6 +133,7 @@ export const {
   removeGame,
   setGamesError,
   resetGamesState,
+  setSelectedGame,
 } = gamesSlice.actions;
 
 export const gamesReducer = gamesSlice.reducer;

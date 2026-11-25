@@ -5,6 +5,7 @@ import {
   GetCategoriesUseCase,
   UpdateCategoryUseCase,
   GetCategoryDetailUseCase,
+  GetGameCategoriesUseCase,
 } from '../domain/usecases/categoryUseCases';
 import { CategoryRestDatasource } from '../infrastructure/datasources/CategoryRestDatasource';
 import { CategoryRepositoryImpl } from '../infrastructure/repositories/CategoryRepositoryImpl';
@@ -20,5 +21,6 @@ export const categoriesContainer = {
   updateCategoryUseCase: new UpdateCategoryUseCase(categoryRepository),
   deleteCategoryUseCase: new DeleteCategoryUseCase(categoryRepository),
   getCategoryDetailUseCase: new GetCategoryDetailUseCase(categoryRepository),
+  getGameCategoriesUseCase: new GetGameCategoriesUseCase(categoryRepository),
   categoryRepository,
 };
