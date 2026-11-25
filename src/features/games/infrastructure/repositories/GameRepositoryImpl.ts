@@ -3,6 +3,7 @@ import {
   CreateGameParams,
   GameRepository,
   GetGamesParams,
+  PaginatedGames,
   UpdateGameParams,
 } from '../../domain/repositories/GameRepository';
 import { GameDatasource } from '../datasources/GameDatasource';
@@ -38,9 +39,9 @@ export class GameRepositoryImpl implements GameRepository {
         : this.restDatasource;
   }
 
-  async getAll(params?: GetGamesParams): Promise<Game[]> {
-    const dtos = await this.activeDatasource.getAll(params);
-    return dtos.map(GameMapper.toDomain);
+    async getAll(params?: GetGamesParams): Promise<PaginatedGames> {
+    const dto = await this.activeDatasource.getAll(params);
+    return GameMapper.toPaginatedDomain(dto);
   }
 
   async getById(id: string): Promise<Game> {

@@ -1,5 +1,10 @@
 import { GetGamesParams } from '../../domain/repositories/GameRepository';
-import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
+import {
+  CreateGameDto,
+  GameDto,
+  PaginatedGamesDto,
+  UpdateGameDto,
+} from '../dtos/GameDto';
 import { GameDatasource } from './GameDatasource';
 
 export class GameRestDatasource implements GameDatasource {
@@ -23,7 +28,7 @@ export class GameRestDatasource implements GameDatasource {
     return headers;
   }
 
-  async getAll(params?: GetGamesParams): Promise<GameDto[]> {
+    async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
     const query = new URLSearchParams();
     if (params?.page !== undefined) query.set('page', String(params.page));
     if (params?.limit !== undefined) query.set('limit', String(params.limit));

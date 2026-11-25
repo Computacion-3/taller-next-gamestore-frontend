@@ -1,9 +1,15 @@
 import { Game } from '../../domain/entities/Game';
 import {
   CreateGameParams,
+  PaginatedGames,
   UpdateGameParams,
 } from '../../domain/repositories/GameRepository';
-import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
+import {
+  CreateGameDto,
+  GameDto,
+  PaginatedGamesDto,
+  UpdateGameDto,
+} from '../dtos/GameDto';
 
 export class GameMapper {
   static toDomain(dto: GameDto): Game {
@@ -21,6 +27,16 @@ export class GameMapper {
       createdAt: dto.createdAt ? new Date(dto.createdAt) : undefined,
       updatedAt: dto.updatedAt ? new Date(dto.updatedAt) : undefined,
     });
+  }
+
+    static toPaginatedDomain(dto: PaginatedGamesDto): PaginatedGames {
+    return {
+      items: dto.items.map(GameMapper.toDomain),
+      total: Number(dto.total),
+      page: Number(dto.page),
+      limit: Number(dto.limit),
+      totalPages: Number(dto.totalPages),
+    };
   }
 
   static toDto(entity: Game): GameDto {
