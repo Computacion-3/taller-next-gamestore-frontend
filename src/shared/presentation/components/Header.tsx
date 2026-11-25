@@ -86,6 +86,18 @@ export function Header() {
                   USUARIOS
                 </Link>
               )}
+              {isAdmin && (
+                <Link
+                  href="/admin/games"
+                  className={`border-b-2 py-1 text-sm font-semibold tracking-wide transition ${
+                    pathname.startsWith('/admin')
+                      ? 'border-blue-night text-blue-night'
+                      : 'border-transparent text-blue-night/60 hover:text-blue-star'
+                  }`}
+                >
+                  ADMIN
+                </Link>
+              )}
             </nav>
           </div>
 
