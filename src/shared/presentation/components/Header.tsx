@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
+import { RealtimeStatusBadge } from '@/features/realtime/presentation/components/RealtimeStatusBadge';
 import { useAuth } from '@/features/auth/presentation/hooks/useAuth';
 
 const PRIMARY_NAV = [
@@ -91,6 +92,7 @@ export function Header() {
           <div className="flex items-center gap-4">
             {isAuthenticated && user ? (
               <>
+                <RealtimeStatusBadge />
                 <div className="hidden text-right text-xs sm:block">
                   <p className="font-semibold text-blue-night">{user.email}</p>
                   <p className="uppercase tracking-wider text-blue-night/75">

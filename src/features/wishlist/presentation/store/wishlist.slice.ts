@@ -60,6 +60,14 @@ const wishlistSlice = createSlice({
     setPriceAlerts(state, action: PayloadAction<PriceAlert[]>) {
       state.alerts = action.payload;
     },
+    upsertPriceAlert(state, action: PayloadAction<PriceAlert>) {
+      state.alerts = [
+        action.payload,
+        ...state.alerts.filter(
+          (alert) => alert.wishlistItemId !== action.payload.wishlistItemId,
+        ),
+      ];
+    },
     addWishlistRecord(state, action: PayloadAction<WishlistRecord>) {
       state.items.unshift(action.payload);
     },
@@ -84,6 +92,7 @@ export const {
   removeWishlistRecord,
   setWishlistError,
   resetWishlistState,
+  upsertPriceAlert,
 } = wishlistSlice.actions;
 
 export const wishlistReducer = wishlistSlice.reducer;

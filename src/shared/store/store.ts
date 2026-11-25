@@ -10,6 +10,7 @@ import { purchasesReducer } from '@/features/purchases/presentation/store/purcha
 import { usersReducer } from '@/features/users/presentation/store/users.slice';
 import { wishlistReducer } from '@/features/wishlist/presentation/store/wishlist.slice';
 import { uiReducer } from './ui.slice';
+import { realtimeReducer } from '@/features/realtime/presentation/store/realtime.slice';
 
 const appReducer = combineReducers({
   auth: authReducer,
@@ -19,6 +20,7 @@ const appReducer = combineReducers({
   library: libraryReducer,
   purchases: purchasesReducer,
   users: usersReducer,
+  realtime: realtimeReducer,
   ui: uiReducer,
 });
 
