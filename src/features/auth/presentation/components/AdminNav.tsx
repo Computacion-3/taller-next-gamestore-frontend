@@ -7,6 +7,7 @@ import { Can } from './Can';
 
 const ADMIN_LINKS: Array<{ href: string; label: string; authority: Authority }> = [
   { href: '/admin/games', label: 'Juegos', authority: 'games:create' },
+  { href: '/admin/categories', label: 'Categorías', authority: 'categories:manage' },
   { href: '/users', label: 'Usuarios', authority: 'users:manage' },
   { href: '/purchases/all', label: 'Compras', authority: 'purchases:view_all' },
 ];
