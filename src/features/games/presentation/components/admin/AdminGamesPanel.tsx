@@ -13,10 +13,12 @@ import { useGames } from '../../hooks/useGames';
 import { AdminGamesTable } from './AdminGamesTable';
 import { DiscountDialog } from './DiscountDialog';
 import { GameFormDialog, GameFormValues } from './GameFormDialog';
+import { ManageGameCategoriesDialog } from '@/features/categories/presentation/components/admin/ManageGameCategoriesDialog';
 
 const PAGE_SIZE = 10;
 
 type DialogState =
+  | { kind: 'categories'; game: Game }
   | { kind: 'create' }
   | { kind: 'edit'; game: Game }
   | { kind: 'discount'; game: Game }
@@ -121,6 +123,7 @@ export function AdminGamesPanel() {
           games={games}
           onEdit={(game) => openDialog({ kind: 'edit', game })}
           onDiscount={(game) => openDialog({ kind: 'discount', game })}
+          onCategories={(game) => openDialog({ kind: 'categories', game })}
           onRemove={(game) => openDialog({ kind: 'remove', game })}
         />
       )}
@@ -145,6 +148,12 @@ export function AdminGamesPanel() {
         serverError={actionError}
         onConfirm={handleDiscount}
         onClose={closeDialog}
+      />
+
+      <ManageGameCategoriesDialog
+        key={`categories-${dialogKey}`}
+        game={dialog?.kind === 'categories' ? dialog.game : null}
+        onClose={() => setDialog(null)}
       />
 
       <ConfirmDialog
