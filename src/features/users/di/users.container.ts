@@ -4,6 +4,7 @@ import {
   GetUsersUseCase,
   UpdateMyEmailUseCase,
   UpdateUserRoleUseCase,
+  GetMyAccountUseCase,
 } from '../domain/usecases/userUseCases';
 import {
   UserRepositoryImpl,
@@ -20,5 +21,6 @@ export const usersContainer = {
   updateUserRoleUseCase: new UpdateUserRoleUseCase(userRepository),
   updateMyEmailUseCase: new UpdateMyEmailUseCase(userRepository),
   changeMyPasswordUseCase: new ChangeMyPasswordUseCase(userRepository),
+  getMyAccountUseCase: new GetMyAccountUseCase(userRepository),
   userRepository,
 };

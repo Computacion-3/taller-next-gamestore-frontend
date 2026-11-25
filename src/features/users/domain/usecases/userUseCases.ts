@@ -38,3 +38,10 @@ export class ChangeMyPasswordUseCase {
     return this.repository.changeMyPassword(params);
   }
 }
+
+export class GetMyAccountUseCase {
+  constructor(private readonly repository: UserRepository) {}
+  execute(): Promise<UserAccount> {
+    return this.repository.getMyProfile();
+  }
+}

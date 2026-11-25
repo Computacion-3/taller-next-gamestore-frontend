@@ -122,6 +122,16 @@ export function useAuth() {
     return profile;
   }, [dispatch]);
 
+  const updateWalletBalance = useCallback(
+    (balance: number) => {
+      const updated = authContainer.updateWalletBalanceUseCase.execute(balance);
+      if (updated) {
+        dispatch(setAuthUser(toUserProps(updated)));
+      }
+    },
+    [dispatch],
+  );
+
   const logout = useCallback(async () => {
     dispatch(setAuthLoading(true));
     try {
@@ -157,6 +167,7 @@ export function useAuth() {
     login,
     register,
     refreshProfile,
+    updateWalletBalance,
     logout,
     clearError,
   };
