@@ -48,4 +48,17 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   async delete(id: string): Promise<void> {
     await this.datasource.delete(id);
   }
+
+  async assignToGame(gameId: string, categoryId: string): Promise<void> {
+    await this.datasource.assignToGame(gameId, categoryId);
+  }
+
+  async removeFromGame(gameId: string, categoryId: string): Promise<void> {
+    await this.datasource.removeFromGame(gameId, categoryId);
+  }
+
+  async setForGame(gameId: string, categoryIds: string[]): Promise<Category[]> {
+    const dtos = await this.datasource.setForGame(gameId, categoryIds);
+    return dtos.map(CategoryMapper.toDomain);
+  }
 }

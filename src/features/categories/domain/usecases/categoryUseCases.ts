@@ -26,6 +26,9 @@ export class CreateCategoryUseCase {
 export class UpdateCategoryUseCase {
   constructor(private readonly repository: CategoryRepository) {}
   execute(id: string, params: UpdateCategoryParams): Promise<Category> {
+    if (params.name !== undefined && params.name.trim().length === 0) {
+      throw new Error('El nombre de la categoría no puede quedar vacío.');
+    }
     return this.repository.update(id, params);
   }
 }
@@ -60,5 +63,40 @@ export class GetGameCategoriesUseCase {
       throw new Error('El identificador del videojuego es obligatorio.');
     }
     return this.repository.getByGame(gameId);
+  }
+}
+
+function assertId(value: string, message: string): void {
+  if (!value || value.trim().length === 0) {
+    throw new Error(message);
+  }
+}
+
+export class AssignCategoryToGameUseCase {
+  constructor(private readonly repository: CategoryRepository) {}
+  execute(gameId: string, categoryId: string): Promise<void> {
+    assertId(gameId, 'El identificador del videojuego es obligatorio.');
+    assertId(categoryId, 'Selecciona una categoría.');
+    return this.repository.assignToGame(gameId, categoryId);
+  }
+}
+
+export class RemoveCategoryFromGameUseCase {
+  constructor(private readonly repository: CategoryRepository) {}
+  execute(gameId: string, categoryId: string): Promise<void> {
+    assertId(gameId, 'El identificador del videojuego es obligatorio.');
+    assertId(categoryId, 'El identificador de la categoría es obligatorio.');
+    return this.repository.removeFromGame(gameId, categoryId);
+  }
+}
+
+export class SetGameCategoriesUseCase {
+  constructor(private readonly repository: CategoryRepository) {}
+  execute(gameId: string, categoryIds: string[]): Promise<Category[]> {
+    assertId(gameId, 'El identificador del videojuego es obligatorio.');
+    if (new Set(categoryIds).size !== categoryIds.length) {
+      throw new Error('No se puede repetir una categoría.');
+    }
+    return this.repository.setForGame(gameId, categoryIds);
   }
 }

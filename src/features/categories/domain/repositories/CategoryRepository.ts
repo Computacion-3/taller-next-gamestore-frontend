@@ -25,4 +25,10 @@ export interface CategoryRepository {
   create(params: CreateCategoryParams): Promise<Category>;
   update(id: string, params: UpdateCategoryParams): Promise<Category>;
   delete(id: string): Promise<void>;
+  /** POST /games/:gameId/categories/:categoryId */
+  assignToGame(gameId: string, categoryId: string): Promise<void>;
+  /** DELETE /games/:gameId/categories/:categoryId */
+  removeFromGame(gameId: string, categoryId: string): Promise<void>;
+  /** PUT /games/:gameId/categories: reemplaza todas (un arreglo vacío las quita). */
+  setForGame(gameId: string, categoryIds: string[]): Promise<Category[]>;
 }
