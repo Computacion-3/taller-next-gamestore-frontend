@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/features/auth/presentation/hooks/useAuth';
 import { Pagination } from '@/shared/presentation/components/Pagination';
+import { useIsClient } from '@/shared/presentation/hooks/useIsClient';
 import { useGames } from '../hooks/useGames';
 import { GameList } from './GameList';
 
@@ -19,6 +20,8 @@ export function GameCatalog() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { isAuthenticated, hydrated } = useAuth();
+  const isClient = useIsClient();
+  const sessionReady = isClient && hydrated;
 
   // La URL es la fuente de verdad: /?search=dragon&page=2
   const search = searchParams.get('search')?.trim() || undefined;
@@ -26,7 +29,7 @@ export function GameCatalog() {
 
   const { games, pagination, isLoading, error } = useGames(
     { search, page, limit: ITEMS_PER_PAGE },
-    { enabled: hydrated && isAuthenticated },
+    { enabled: sessionReady && isAuthenticated },
   );
 
   const handlePageChange = (nextPage: number) => {
@@ -36,7 +39,7 @@ export function GameCatalog() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (!hydrated) {
+  if (!sessionReady) {
     return <p className="text-sm text-slate-100">Cargando sesión...</p>;
   }
 
