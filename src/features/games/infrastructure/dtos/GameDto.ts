@@ -33,11 +33,3 @@ export interface UpdateGameDto {
   coverImage?: string;
   categoryIds?: string[];
 }
-
-export interface PaginatedGamesDto {
-  items: GameDto[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}

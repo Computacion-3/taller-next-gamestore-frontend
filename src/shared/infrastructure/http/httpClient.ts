@@ -4,17 +4,6 @@ export interface HttpRequestOptions {
   headers?: Record<string, string>;
 }
 
-/** Error HTTP con el código de estado, para poder distinguir 401, 403, 409... */
-export class HttpError extends Error {
-  readonly status: number;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
 export class RestHttpClient {
   private readonly baseUrl: string;
 
@@ -59,7 +48,7 @@ export class RestHttpClient {
       } catch {
         // Mantiene el mensaje genérico si el cuerpo no es JSON
       }
-      throw new HttpError(message, response.status);
+      throw new Error(message);
     }
 
     if (response.status === 204) {

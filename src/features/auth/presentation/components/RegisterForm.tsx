@@ -39,12 +39,12 @@ export function RegisterForm() {
   const activeError = validationError ?? error;
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-blue-sky/50 bg-blue-night/80 p-8 shadow-2xl backdrop-blur-md">
+    <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-extrabold tracking-tight text-white">
+        <h1 className="text-2xl font-bold tracking-tight text-white">
           Crear Cuenta
         </h1>
-        <p className="mt-1 text-sm text-blue-cloud/85">
+        <p className="mt-1 text-sm text-slate-400">
           Únete a GameStore y empieza tu biblioteca digital
         </p>
       </div>
@@ -52,7 +52,7 @@ export function RegisterForm() {
       {activeError && (
         <div
           role="alert"
-          className="mb-4 rounded-lg border border-red-400/50 bg-red-950/75 px-4 py-3 text-sm text-red-100"
+          className="mb-4 rounded-lg border border-red-500/40 bg-red-950/60 px-4 py-3 text-sm text-red-200"
         >
           {activeError}
         </div>
@@ -62,7 +62,7 @@ export function RegisterForm() {
         <div>
           <label
             htmlFor="register-email"
-            className="block text-sm font-medium text-blue-cloud"
+            className="block text-sm font-medium text-slate-300"
           >
             Correo electrónico
           </label>
@@ -71,16 +71,16 @@ export function RegisterForm() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="nuevo@gamestore.com"
+            placeholder="nuevo@store.com"
             autoComplete="email"
-            className="mt-1.5 w-full rounded-lg border border-blue-sky/40 bg-blue-cloud/95 px-3.5 py-2.5 text-sm font-medium text-blue-night placeholder-blue-night/45 focus:border-blue-star focus:outline-none focus:ring-2 focus:ring-blue-star"
+            className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
         </div>
 
         <div>
           <label
             htmlFor="register-password"
-            className="block text-sm font-medium text-blue-cloud"
+            className="block text-sm font-medium text-slate-300"
           >
             Contraseña (mínimo 6 caracteres)
           </label>
@@ -91,14 +91,14 @@ export function RegisterForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             autoComplete="new-password"
-            className="mt-1.5 w-full rounded-lg border border-blue-sky/40 bg-blue-cloud/95 px-3.5 py-2.5 text-sm font-medium text-blue-night placeholder-blue-night/45 focus:border-blue-star focus:outline-none focus:ring-2 focus:ring-blue-star"
+            className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
         </div>
 
         <div>
           <label
             htmlFor="register-confirm-password"
-            className="block text-sm font-medium text-blue-cloud"
+            className="block text-sm font-medium text-slate-300"
           >
             Confirmar contraseña
           </label>
@@ -109,24 +109,24 @@ export function RegisterForm() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="••••••••"
             autoComplete="new-password"
-            className="mt-1.5 w-full rounded-lg border border-blue-sky/40 bg-blue-cloud/95 px-3.5 py-2.5 text-sm font-medium text-blue-night placeholder-blue-night/45 focus:border-blue-star focus:outline-none focus:ring-2 focus:ring-blue-star"
+            className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-2 w-full rounded-lg bg-blue-sky px-4 py-2.5 text-sm font-bold text-blue-night shadow transition hover:bg-blue-star hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-2 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? 'Creando cuenta...' : 'Registrarse'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-blue-cloud/85">
+      <p className="mt-6 text-center text-sm text-slate-400">
         ¿Ya tienes una cuenta?{' '}
         <Link
           href="/login"
-          className="font-semibold text-blue-sky transition hover:text-blue-star"
+          className="font-semibold text-emerald-400 hover:text-emerald-300"
         >
           Inicia sesión
         </Link>

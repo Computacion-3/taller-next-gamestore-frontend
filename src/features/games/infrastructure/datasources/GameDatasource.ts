@@ -3,15 +3,10 @@ import {
   GetGamesParams,
   UpdateGameParams,
 } from '../../domain/repositories/GameRepository';
-import {
-  CreateGameDto,
-  GameDto,
-  PaginatedGamesDto,
-  UpdateGameDto,
-} from '../dtos/GameDto';
+import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
 
 export interface GameDatasource {
-  getAll(params?: GetGamesParams): Promise<PaginatedGamesDto>;
+  getAll(params?: GetGamesParams): Promise<GameDto[]>;
   getById(id: string): Promise<GameDto>;
   create(dto: CreateGameDto): Promise<GameDto>;
   update(id: string, dto: UpdateGameDto): Promise<GameDto>;

@@ -7,15 +7,6 @@ export interface GetGamesParams {
   categoryId?: string;
 }
 
-/** Una página del catálogo más los datos necesarios para paginar. */
-export interface PaginatedGames {
-  items: Game[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
 export interface CreateGameParams {
   title: string;
   description: string;
@@ -38,7 +29,7 @@ export interface UpdateGameParams {
 }
 
 export interface GameRepository {
-  getAll(params?: GetGamesParams): Promise<PaginatedGames>;
+  getAll(params?: GetGamesParams): Promise<Game[]>;
   getById(id: string): Promise<Game>;
   create(params: CreateGameParams): Promise<Game>;
   update(id: string, params: UpdateGameParams): Promise<Game>;

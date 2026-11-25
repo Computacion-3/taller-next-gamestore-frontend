@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import { Toaster } from "@/shared/presentation/components/Toaster";
-import { RealtimeBridge } from "@/features/realtime/presentation/components/RealtimeBridge";
 import { Geist, Geist_Mono } from "next/font/google";
 import { StoreProvider } from "@/shared/store/StoreProvider";
-import { Header } from "@/shared/presentation/components/Header";
-import { Footer } from "@/shared/presentation/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,14 +25,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100">
-        <StoreProvider>
-          <RealtimeBridge />
-          <Header />
-          <div className="flex flex-1 flex-col">{children}</div>
-          <Footer />
-          <Toaster />
-        </StoreProvider>
+      <body className="min-h-full flex flex-col">
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );

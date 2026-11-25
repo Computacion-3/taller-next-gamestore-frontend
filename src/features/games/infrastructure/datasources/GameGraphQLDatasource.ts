@@ -1,10 +1,5 @@
 import { GetGamesParams } from '../../domain/repositories/GameRepository';
-import {
-  CreateGameDto,
-  GameDto,
-  PaginatedGamesDto,
-  UpdateGameDto,
-} from '../dtos/GameDto';
+import { CreateGameDto, GameDto, UpdateGameDto } from '../dtos/GameDto';
 import { GameDatasource } from './GameDatasource';
 
 const GAME_FIELDS = `
@@ -70,17 +65,11 @@ export class GameGraphQLDatasource implements GameDatasource {
     return json.data;
   }
 
-  async getAll(params?: GetGamesParams): Promise<PaginatedGamesDto> {
-    const data = await this.request<{ games: PaginatedGamesDto }>(
+  async getAll(params?: GetGamesParams): Promise<GameDto[]> {
+    const data = await this.request<{ games: GameDto[] }>(
       `query GetGames($search: String, $categoryId: String, $page: Int, $limit: Int) {
         games(search: $search, categoryId: $categoryId, page: $page, limit: $limit) {
-          items {
-            ${GAME_FIELDS}
-          }
-          total
-          page
-          limit
-          totalPages
+          ${GAME_FIELDS}
         }
       }`,
       params ? { ...params } : undefined,

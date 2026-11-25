@@ -1,10 +1,9 @@
-import { AuthSplitLayout } from '@/features/auth/presentation/components/AuthSplitLayout';
 import { LoginForm } from '@/features/auth/presentation/components/LoginForm';
 
 export default function LoginPage() {
   return (
-    <AuthSplitLayout>
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12">
       <LoginForm />
-    </AuthSplitLayout>
+    </main>
   );
 }
