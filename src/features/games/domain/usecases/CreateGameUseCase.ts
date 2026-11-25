@@ -11,6 +11,15 @@ export class CreateGameUseCase {
     if (!params.title || params.title.trim().length === 0) {
       throw new Error('El título del videojuego es obligatorio.');
     }
+    if (!params.developer || params.developer.trim().length === 0) {
+      throw new Error('El desarrollador es obligatorio.');
+    }
+    if (!params.description || params.description.trim().length === 0) {
+      throw new Error('La descripción es obligatoria.');
+    }
+    if (Number.isNaN(params.releaseDate.getTime())) {
+      throw new Error('La fecha de lanzamiento no es válida.');
+    }
     if (params.originalPrice < 0) {
       throw new Error('El precio base no puede ser negativo.');
     }
