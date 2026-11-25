@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { StoreProvider } from "@/shared/store/StoreProvider";
 import { Header } from "@/shared/presentation/components/Header";
 import { Footer } from "@/shared/presentation/components/Footer";
+import { ToastContainer } from "@/shared/presentation/components/ToastContainer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,9 +31,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100">
         <StoreProvider>
-          <Header />
+          {/* usePathname() en rutas dinámicas (/games/[id]) exige Suspense */}
+          <Suspense fallback={<div className="h-[8.5rem] w-full bg-blue-cloud" />}>
+            <Header />
+          </Suspense>
           <div className="flex flex-1 flex-col">{children}</div>
           <Footer />
+          <ToastContainer />
         </StoreProvider>
       </body>
     </html>

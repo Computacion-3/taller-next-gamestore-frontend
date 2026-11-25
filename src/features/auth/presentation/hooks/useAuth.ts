@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
+import { useToasts } from '@/shared/presentation/hooks/useToasts';
 import { useAppDispatch, useAppSelector } from '@/shared/store/hooks';
 import { selectAuth } from '@/shared/store/selectors';
 import { authContainer } from '../../di/auth.container';
@@ -20,6 +21,19 @@ import {
   setAuthUser,
 } from '../store/auth.slice';
 
+/**
+ * Lee ?redirect= tras el guard de rutas. Solo acepta rutas internas
+ * (evita open-redirect hacia dominios externos).
+ */
+function getSafeRedirect(): string {
+  if (typeof window === 'undefined') return '/';
+  const target = new URLSearchParams(window.location.search).get('redirect');
+  if (target && target.startsWith('/') && !target.startsWith('//')) {
+    return target;
+  }
+  return '/';
+}
+
 function toUserProps(user: AuthUser): AuthUserProps {
   return {
     id: user.id,
@@ -33,6 +47,7 @@ export function useAuth() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const state = useAppSelector(selectAuth);
+  const { notify } = useToasts();
 
   useEffect(() => {
     if (!state.hydrated) {
@@ -61,16 +76,18 @@ export function useAuth() {
             user: toUserProps(session.user),
           }),
         );
-        router.push('/');
+        notify('success', 'Sesión iniciada', `Bienvenido, ${session.user.email}`);
+        router.push(getSafeRedirect());
         return session;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Error al iniciar sesión.';
+        notify('error', 'No se pudo iniciar sesión', message);
         dispatch(setAuthError(message));
         throw err;
       }
     },
-    [dispatch, router],
+    [dispatch, router, notify],
   );
 
   const register = useCallback(
@@ -85,16 +102,18 @@ export function useAuth() {
             user: toUserProps(session.user),
           }),
         );
+        notify('success', 'Cuenta creada', `Bienvenido, ${session.user.email}`);
         router.push('/');
         return session;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Error al registrar usuario.';
+        notify('error', 'No se pudo registrar', message);
         dispatch(setAuthError(message));
         throw err;
       }
     },
-    [dispatch, router],
+    [dispatch, router, notify],
   );
 
   const refreshProfile = useCallback(async () => {
@@ -108,10 +127,13 @@ export function useAuth() {
     try {
       await authContainer.logoutUseCase.execute();
     } finally {
+      // resetAuthState limpia todo el store (incluidos los toasts),
+      // por eso la notificación se emite después del reseteo.
       dispatch(resetAuthState());
+      notify('info', 'Sesión cerrada', 'Has salido de tu cuenta.');
       router.push('/login');
     }
-  }, [dispatch, router]);
+  }, [dispatch, router, notify]);
 
   const clearError = useCallback(() => {
     dispatch(setAuthError(null));
