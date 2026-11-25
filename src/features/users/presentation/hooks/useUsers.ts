@@ -46,6 +46,7 @@ export function useUsers() {
     [dispatch],
   );
 
+
   const updateMyEmail = useCallback(async (email: string) => {
     return usersContainer.updateMyEmailUseCase.execute(email);
   }, []);

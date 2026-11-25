@@ -17,6 +17,6 @@ export interface AuthRepository {
   getProfile(): Promise<AuthUser>;
   getToken(): string | null;
   getStoredSession(): AuthSession | null;
-    /** Actualiza el saldo del usuario guardado en la sesión local. */
-  updateStoredWalletBalance(balance: number): AuthUser | null;
+  /** Guarda en el almacenamiento local los datos actualizados del usuario con sesión. */
+  saveSessionUser(user: AuthUser): void;
 }
