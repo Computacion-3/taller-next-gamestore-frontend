@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getAuthoritiesForRole } from '@/features/auth/domain/entities/Authority';
 import { UserAccount } from '../../domain/entities/UserAccount';
 import { RoleBadge } from './RoleBadge';
@@ -79,20 +80,29 @@ export function UsersTable({
                   {user.createdAt ? dateFormat.format(user.createdAt) : '—'}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button
-                    type="button"
-                    data-testid={`change-role-${user.email}`}
-                    onClick={() => onChangeRole(user)}
-                    disabled={isSelf}
-                    title={
-                      isSelf
-                        ? 'No puedes cambiar tu propio rol'
-                        : 'Cambiar rol'
-                    }
-                    className="rounded-md border border-blue-sky/50 px-3 py-1.5 text-xs font-semibold transition hover:border-blue-star hover:text-blue-star disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-blue-sky/50 disabled:hover:text-blue-cloud"
-                  >
-                    Cambiar rol
-                  </button>
+                  <div className="flex justify-end gap-2">
+                    <Link
+                      href={`/users/${user.id}/library`}
+                      data-testid={`user-library-${user.email}`}
+                      className="rounded-md border border-blue-sky/50 px-3 py-1.5 text-xs font-semibold transition hover:border-blue-star hover:text-blue-star"
+                    >
+                      Biblioteca
+                    </Link>
+                    <button
+                      type="button"
+                      data-testid={`change-role-${user.email}`}
+                      onClick={() => onChangeRole(user)}
+                      disabled={isSelf}
+                      title={
+                        isSelf
+                          ? 'No puedes cambiar tu propio rol'
+                          : 'Cambiar rol'
+                      }
+                      className="rounded-md border border-blue-sky/50 px-3 py-1.5 text-xs font-semibold transition hover:border-blue-star hover:text-blue-star disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-blue-sky/50 disabled:hover:text-blue-cloud"
+                    >
+                      Cambiar rol
+                    </button>
+                  </div>
                 </td>
               </tr>
             );

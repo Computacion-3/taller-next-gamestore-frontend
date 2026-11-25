@@ -5,7 +5,13 @@ import { formatDateTime, formatPrice } from '@/shared/presentation/utils/format'
 import { Purchase } from '../../domain/entities/Purchase';
 import { PurchaseStatusBadge } from './PurchaseStatusBadge';
 
-export function PurchaseCard({ purchase }: { purchase: Purchase }) {
+export function PurchaseCard({
+  purchase,
+  showBuyer = false,
+}: {
+  purchase: Purchase;
+  showBuyer?: boolean;
+}) {
   const count = purchase.items.length;
 
   return (
@@ -15,6 +21,11 @@ export function PurchaseCard({ purchase }: { purchase: Purchase }) {
           <p className="text-xs uppercase tracking-wider text-blue-cloud/60">
             {formatDateTime(purchase.createdAt)}
           </p>
+          {showBuyer && purchase.user && (
+            <p className="mt-1 text-xs font-semibold text-blue-sky">
+              {purchase.user.email}
+            </p>
+          )}
           <p className="mt-1 text-lg font-semibold text-white">
             {count} {count === 1 ? 'juego' : 'juegos'}
           </p>

@@ -7,6 +7,8 @@ import { LoginRequired } from '@/features/auth/presentation/components/LoginRequ
 import { useSessionReady } from '@/features/auth/presentation/hooks/useSessionReady';
 import { AddToWishlistButton } from '@/features/wishlist/presentation/components/AddToWishlistButton';
 import { useWishlist } from '@/features/wishlist/presentation/hooks/useWishlist';
+import { useLibrary } from '@/features/library/presentation/hooks/useLibrary';
+import { BuyGameButton } from '@/features/purchases/presentation/components/BuyGameButton';
 import { Pagination } from '@/shared/presentation/components/Pagination';
 import { useGames } from '../hooks/useGames';
 import { GameList } from './GameList';
@@ -35,12 +37,15 @@ export function GameCatalog() {
   );
   const { fetchWishlist } = useWishlist();
 
-  // Se carga la wishlist para marcar los juegos que ya están guardados
+  const { ownedGameIds, fetchMyLibrary } = useLibrary();
+
+  // Wishlist y biblioteca: para marcar qué juegos ya están guardados o comprados
   useEffect(() => {
     if (canLoad) {
       void fetchWishlist();
+      void fetchMyLibrary();
     }
-  }, [canLoad, fetchWishlist]);
+  }, [canLoad, fetchWishlist, fetchMyLibrary]);
 
   const handlePageChange = (nextPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -73,7 +78,12 @@ export function GameCatalog() {
         games={games}
         isLoading={isLoading}
         error={error}
-        renderActions={(game) => <AddToWishlistButton game={game} />}
+        renderActions={(game) => (
+          <div className="flex flex-col items-start gap-2">
+            <BuyGameButton game={game} />
+            {!ownedGameIds.has(game.id) && <AddToWishlistButton game={game} />}
+          </div>
+        )}
       />
 
       {!isLoading && !error && (
