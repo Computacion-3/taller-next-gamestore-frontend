@@ -8,6 +8,7 @@ import {
   addPurchase,
   deserializePurchase,
   serializePurchase,
+  setAllPurchases,
   setPurchases,
   setPurchasesError,
   setPurchasesLoading,
@@ -16,11 +17,12 @@ import {
 
 export function usePurchases() {
   const dispatch = useAppDispatch();
-  const { items, selected, isLoading, error } = useAppSelector(
+  const { items, allItems, selected, isLoading, error } = useAppSelector(
     (root) => root.purchases,
   );
 
   const purchases = useMemo(() => items.map(deserializePurchase), [items]);
+  const allPurchases = useMemo(() => allItems.map(deserializePurchase), [allItems]);
   const selectedPurchase = useMemo(
     () => (selected ? deserializePurchase(selected) : null),
     [selected],
@@ -44,7 +46,7 @@ export function usePurchases() {
     dispatch(setPurchasesLoading(true));
     try {
       const result = await purchasesContainer.getAllPurchasesUseCase.execute();
-      dispatch(setPurchases(result.map(serializePurchase)));
+      dispatch(setAllPurchases(result.map(serializePurchase)));
     } catch (err) {
       dispatch(
         setPurchasesError(
@@ -55,16 +57,6 @@ export function usePurchases() {
       );
     }
   }, [dispatch]);
-
-  const createPurchase = useCallback(
-    async (params: CreatePurchaseParams) => {
-      const created =
-        await purchasesContainer.createPurchaseUseCase.execute(params);
-      dispatch(addPurchase(serializePurchase(created)));
-      return created;
-    },
-    [dispatch],
-  );
 
   const fetchPurchaseById = useCallback(
     async (id: string) => {
@@ -83,14 +75,24 @@ export function usePurchases() {
     [dispatch],
   );
 
+  const createPurchase = useCallback(
+    async (params: CreatePurchaseParams) => {
+      const created = await purchasesContainer.createPurchaseUseCase.execute(params);
+      dispatch(addPurchase(serializePurchase(created)));
+      return created;
+    },
+    [dispatch],
+  );
+
   return {
     purchases,
+    allPurchases,
+    selectedPurchase,
     isLoading,
     error,
     fetchMyPurchases,
     fetchAllPurchases,
-    createPurchase,
-    selectedPurchase,
     fetchPurchaseById,
+    createPurchase,
   };
 }
