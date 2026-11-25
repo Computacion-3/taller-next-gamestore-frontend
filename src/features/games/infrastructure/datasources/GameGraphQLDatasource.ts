@@ -21,7 +21,7 @@ export class GameGraphQLDatasource implements GameDatasource {
   private readonly endpoint: string;
 
   constructor(
-    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000',
     private readonly getToken?: () => string | null,
   ) {
     this.endpoint = `${baseUrl.replace(/\/$/, '')}/graphql`;
