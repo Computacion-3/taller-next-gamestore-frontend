@@ -2,16 +2,18 @@ import { ADMIN, CLIENT, Credentials, TOKEN_KEY } from '../support/commands';
 
 function loginViaUi({ email, password }: Credentials) {
   cy.visit('/login');
+  cy.get('main form fieldset').should('not.be.disabled');
   cy.get('#login-email').type(email);
   cy.get('#login-password').type(password, { log: false });
-  cy.get('form button[type="submit"]').click();
+  cy.get('main form button[type="submit"]').click();
 }
 
 describe('Autenticación y sesión JWT', () => {
   describe('Login', () => {
     it('valida los campos vacíos sin llamar al backend', () => {
       cy.visit('/login');
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form fieldset').should('not.be.disabled');
+      cy.get('main form button[type="submit"]').click();
       cy.contains('[role="alert"]', 'Por favor ingresa tu correo');
       cy.location('pathname').should('eq', '/login');
     });
@@ -48,10 +50,11 @@ describe('Autenticación y sesión JWT', () => {
     it('crea una cuenta nueva con rol client e inicia sesión', () => {
       const email = `registro_${Date.now()}@store.com`;
       cy.visit('/register');
+      cy.get('main form fieldset').should('not.be.disabled');
       cy.get('#register-email').type(email);
       cy.get('#register-password').type('Password123', { log: false });
       cy.get('#register-confirm-password').type('Password123', { log: false });
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form button[type="submit"]').click();
 
       cy.location('pathname').should('eq', '/');
       cy.contains('header', email);
@@ -61,10 +64,11 @@ describe('Autenticación y sesión JWT', () => {
 
     it('rechaza un correo ya registrado', () => {
       cy.visit('/register');
+      cy.get('main form fieldset').should('not.be.disabled');
       cy.get('#register-email').type(ADMIN.email);
       cy.get('#register-password').type('Password123', { log: false });
       cy.get('#register-confirm-password').type('Password123', { log: false });
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form button[type="submit"]').click();
       cy.contains('[role="alert"]', 'ya está registrado');
       cy.location('pathname').should('eq', '/register');
     });

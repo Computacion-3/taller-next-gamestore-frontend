@@ -2,10 +2,14 @@
 
 import Link from 'next/link';
 import { FormEvent, useState } from 'react';
+import { useIsClient } from '@/shared/presentation/hooks/useIsClient';
 import { useAuth } from '../hooks/useAuth';
 
 export function RegisterForm() {
   const { register, isLoading, error, clearError } = useAuth();
+  // Hasta que React hidrata, el formulario no tiene sus eventos: se deshabilita para
+  // evitar un envío nativo del navegador que recargaría la página sin registrar.
+  const isClient = useIsClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -58,7 +62,8 @@ export function RegisterForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <form onSubmit={handleSubmit} noValidate>
+        <fieldset disabled={!isClient} aria-busy={!isClient} className="space-y-4">
         <div>
           <label
             htmlFor="register-email"
@@ -120,6 +125,7 @@ export function RegisterForm() {
         >
           {isLoading ? 'Creando cuenta...' : 'Registrarse'}
         </button>
+        </fieldset>
       </form>
 
       <p className="mt-6 text-center text-sm text-blue-cloud/85">

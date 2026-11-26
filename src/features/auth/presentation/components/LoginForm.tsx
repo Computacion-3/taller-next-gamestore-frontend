@@ -2,10 +2,14 @@
 
 import Link from 'next/link';
 import { FormEvent, useState } from 'react';
+import { useIsClient } from '@/shared/presentation/hooks/useIsClient';
 import { useAuth } from '../hooks/useAuth';
 
 export function LoginForm() {
   const { login, isLoading, error, clearError } = useAuth();
+  // Hasta que React hidrata, el formulario no tiene sus eventos: se deshabilita para
+  // evitar un envío nativo del navegador que recargaría la página sin iniciar sesión.
+  const isClient = useIsClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -53,7 +57,8 @@ export function LoginForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <form onSubmit={handleSubmit} noValidate>
+        <fieldset disabled={!isClient} aria-busy={!isClient} className="space-y-4">
         <div>
           <label
             htmlFor="login-email"
@@ -97,6 +102,7 @@ export function LoginForm() {
         >
           {isLoading ? 'Verificando credenciales...' : 'Entrar a la tienda'}
         </button>
+        </fieldset>
       </form>
 
       <p className="mt-6 text-center text-sm text-blue-cloud/85">

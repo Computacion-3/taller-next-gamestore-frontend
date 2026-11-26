@@ -63,8 +63,12 @@ Cypress.Commands.add('seed', () => {
 });
 
 Cypress.Commands.add('apiLogin', (credentials: Credentials) => {
+  // Solo email y password: el backend rechaza campos extra (forbidNonWhitelisted)
   return cy
-    .request('POST', `${apiUrl()}/auth/login`, credentials)
+    .request('POST', `${apiUrl()}/auth/login`, {
+      email: credentials.email,
+      password: credentials.password,
+    })
     .then((res) => res.body as ApiSession);
 });
 
