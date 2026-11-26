@@ -6,6 +6,7 @@ import {
   RegisterRequestDto,
 } from '../dtos/AuthDto';
 import { AuthDatasource } from './AuthDatasource';
+import { HttpError } from '@/shared/infrastructure/http/httpClient';
 
 export class AuthRestDatasource implements AuthDatasource {
   private readonly baseUrl: string;
@@ -62,7 +63,7 @@ export class AuthRestDatasource implements AuthDatasource {
         response,
         'Credenciales inválidas. Verifica tu correo y contraseña.',
       );
-      throw new Error(msg);
+      throw new HttpError(msg, response.status);
     }
 
     return response.json();
@@ -80,7 +81,7 @@ export class AuthRestDatasource implements AuthDatasource {
         response,
         'No se pudo registrar la cuenta.',
       );
-      throw new Error(msg);
+      throw new HttpError(msg, response.status);
     }
 
     return response.json();
@@ -97,7 +98,7 @@ export class AuthRestDatasource implements AuthDatasource {
         response,
         'Error al cerrar sesión en el servidor.',
       );
-      throw new Error(msg);
+      throw new HttpError(msg, response.status);
     }
 
     try {
@@ -118,7 +119,7 @@ export class AuthRestDatasource implements AuthDatasource {
         response,
         'Tu sesión ha expirado. Inicia sesión nuevamente.',
       );
-      throw new Error(msg);
+      throw new HttpError(msg, response.status);
     }
 
     return response.json();
