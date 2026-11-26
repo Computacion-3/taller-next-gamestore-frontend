@@ -4,14 +4,14 @@ function loginViaUi({ email, password }: Credentials) {
   cy.visit('/login');
   cy.get('#login-email').type(email);
   cy.get('#login-password').type(password, { log: false });
-  cy.get('form button[type="submit"]').click();
+  cy.get('main form button[type="submit"]').click();
 }
 
 describe('Autenticación y sesión JWT', () => {
   describe('Login', () => {
     it('valida los campos vacíos sin llamar al backend', () => {
       cy.visit('/login');
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form button[type="submit"]').click();
       cy.contains('[role="alert"]', 'Por favor ingresa tu correo');
       cy.location('pathname').should('eq', '/login');
     });
@@ -51,7 +51,7 @@ describe('Autenticación y sesión JWT', () => {
       cy.get('#register-email').type(email);
       cy.get('#register-password').type('Password123', { log: false });
       cy.get('#register-confirm-password').type('Password123', { log: false });
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form button[type="submit"]').click();
 
       cy.location('pathname').should('eq', '/');
       cy.contains('header', email);
@@ -64,7 +64,7 @@ describe('Autenticación y sesión JWT', () => {
       cy.get('#register-email').type(ADMIN.email);
       cy.get('#register-password').type('Password123', { log: false });
       cy.get('#register-confirm-password').type('Password123', { log: false });
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form button[type="submit"]').click();
       cy.contains('[role="alert"]', 'ya está registrado');
       cy.location('pathname').should('eq', '/register');
     });

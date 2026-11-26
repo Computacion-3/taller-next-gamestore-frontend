@@ -22,7 +22,7 @@ describe('Control de acceso por sesión y roles', () => {
       cy.visit('/users');
       cy.get('#login-email').type(ADMIN.email);
       cy.get('#login-password').type(ADMIN.password, { log: false });
-      cy.get('form button[type="submit"]').click();
+      cy.get('main form button[type="submit"]').click();
       cy.location('pathname').should('eq', '/users');
       cy.get('[data-testid="users-table"]').should('be.visible');
     });
