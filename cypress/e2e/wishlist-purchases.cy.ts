@@ -67,39 +67,39 @@ describe('Wishlist, compras y biblioteca del usuario', () => {
   });
 
   it('permite comprar un juego y verlo reflejado en /library y /purchases', () => {
-    cy.apiLogin(ADMIN).then(({ accessToken: adminToken }) => {
-      cy.request<{ data?: ApiGame[] } | ApiGame[]>({
-        method: 'GET',
-        url: `${apiUrl()}/games?limit=6`,
+    cy.apiLogin(ADMIN).then(({ accessToken: adminToken, user: adminUser }) => {
+      const uniqueTitle = `Cypress Test Game ${Date.now()}`;
+
+      cy.request<ApiGame>({
+        method: 'POST',
+        url: `${apiUrl()}/games`,
         headers: { Authorization: `Bearer ${adminToken}` },
-      }).then((gamesRes) => {
-        const list = Array.isArray(gamesRes.body)
-          ? gamesRes.body
-          : (gamesRes.body.data ?? []);
-        const affordable = list.find((g) => Number(g.price) <= 100) ?? list[0];
-        expect(affordable, 'debe existir al menos un juego en el catálogo').to.exist;
+        body: {
+          title: uniqueTitle,
+          description: 'Juego temporal creado para verificar el flujo E2E de compra.',
+          price: 5,
+          developer: 'Cypress Studio',
+          releaseDate: '2026-01-15',
+        },
+      }).then((createdRes) => {
+        const game = createdRes.body;
+        expect(game.id, 'el juego creado debe tener id').to.exist;
 
-        cy.registerUser('buyer').then((user) => {
-          setBrowserSession(user.accessToken, {
-            id: user.id,
-            email: user.email,
-            role: 'client',
-          });
+        setBrowserSession(adminToken, adminUser);
 
-          cy.visit(`/games/${affordable.id}`);
-          cy.get(`[data-testid="buy-${affordable.id}"]`).click();
+        cy.visit(`/games/${game.id}`);
+        cy.get(`[data-testid="buy-${game.id}"]`).click();
 
-          cy.get('[data-testid="confirm-purchase-dialog"]').should('be.visible');
-          cy.get('[data-testid="confirm-purchase"]').should('not.be.disabled').click();
+        cy.get('[data-testid="confirm-purchase-dialog"]').should('be.visible');
+        cy.get('[data-testid="confirm-purchase"]').should('not.be.disabled').click();
 
-          cy.contains('En tu biblioteca');
+        cy.contains('En tu biblioteca');
 
-          cy.visit('/library');
-          cy.contains(affordable.title);
+        cy.visit('/library');
+        cy.contains(game.title);
 
-          cy.visit('/purchases');
-          cy.contains(affordable.title);
-        });
+        cy.visit('/purchases');
+        cy.contains(game.title);
       });
     });
   });
