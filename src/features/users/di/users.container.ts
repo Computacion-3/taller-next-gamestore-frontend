@@ -4,11 +4,10 @@ import {
   GetUsersUseCase,
   UpdateMyEmailUseCase,
   UpdateUserRoleUseCase,
+  GetMyAccountUseCase,
 } from '../domain/usecases/userUseCases';
-import {
-  UserRepositoryImpl,
-  UserRestDatasource,
-} from '../infrastructure/repositories/UserRepositoryImpl';
+import { UserRestDatasource } from '../infrastructure/datasources/UserRestDatasource';
+import { UserRepositoryImpl } from '../infrastructure/repositories/UserRepositoryImpl';
 
 const datasource = new UserRestDatasource(undefined, () =>
   tokenStorage.getToken(),
@@ -20,5 +19,6 @@ export const usersContainer = {
   updateUserRoleUseCase: new UpdateUserRoleUseCase(userRepository),
   updateMyEmailUseCase: new UpdateMyEmailUseCase(userRepository),
   changeMyPasswordUseCase: new ChangeMyPasswordUseCase(userRepository),
+  getMyAccountUseCase: new GetMyAccountUseCase(userRepository),
   userRepository,
 };

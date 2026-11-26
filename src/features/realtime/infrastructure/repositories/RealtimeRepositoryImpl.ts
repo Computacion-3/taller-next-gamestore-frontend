@@ -1,5 +1,5 @@
 import { GameMapper } from '@/features/games/infrastructure/mappers/GameMapper';
-import { WishlistMapper } from '@/features/wishlist/infrastructure/repositories/WishlistRepositoryImpl';
+import { WishlistMapper } from '@/features/wishlist/infrastructure/mappers/WishlistMapper';
 import { SocketDatasource } from '@/shared/infrastructure/datasources/SocketDatasource';
 import { RealtimeHandlers } from '../../domain/entities/RealtimeEvents';
 import { RealtimeRepository } from '../../domain/repositories/RealtimeRepository';

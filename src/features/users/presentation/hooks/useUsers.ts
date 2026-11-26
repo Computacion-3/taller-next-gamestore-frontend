@@ -46,10 +46,6 @@ export function useUsers() {
     [dispatch],
   );
 
-  const getMyProfile = useCallback(
-    () => usersContainer.userRepository.getMyProfile(),
-    [],
-  );
 
   const updateMyEmail = useCallback(async (email: string) => {
     return usersContainer.updateMyEmailUseCase.execute(email);
@@ -59,13 +55,18 @@ export function useUsers() {
     return usersContainer.changeMyPasswordUseCase.execute(params);
   }, []);
 
+  const getMyAccount = useCallback(
+    () => usersContainer.getMyAccountUseCase.execute(),
+    [],
+  );
+
   return {
     users,
     isLoading,
     error,
+    getMyAccount,
     fetchUsers,
     updateUserRole,
-    getMyProfile,
     updateMyEmail,
     changeMyPassword,
   };

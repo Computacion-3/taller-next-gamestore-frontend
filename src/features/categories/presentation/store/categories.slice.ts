@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { GameRecord } from '@/features/games/presentation/store/games.slice';
 import { Category } from '../../domain/entities/Category';
 
 export interface CategoryRecord {
@@ -26,14 +27,29 @@ export function deserializeCategory(record: CategoryRecord): Category {
   });
 }
 
+export interface CategoryDetailRecord {
+  category: CategoryRecord;
+  games: GameRecord[];
+}
+
+/** Categorías de un juego concreto (detalle del juego y administración). */
+export interface GameCategoriesRecord {
+  gameId: string;
+  items: CategoryRecord[];
+}
+
 export interface CategoriesState {
   items: CategoryRecord[];
+  detail: CategoryDetailRecord | null;
+  gameCategories: GameCategoriesRecord | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: CategoriesState = {
   items: [],
+  detail: null,
+  gameCategories: null,
   isLoading: false,
   error: null,
 };
@@ -50,6 +66,14 @@ const categoriesSlice = createSlice({
       state.items = action.payload;
       state.isLoading = false;
       state.error = null;
+    },
+    setCategoryDetail(state, action: PayloadAction<CategoryDetailRecord>) {
+      state.detail = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    },
+    setGameCategories(state, action: PayloadAction<GameCategoriesRecord>) {
+      state.gameCategories = action.payload;
     },
     addCategory(state, action: PayloadAction<CategoryRecord>) {
       state.items.push(action.payload);
@@ -75,11 +99,13 @@ const categoriesSlice = createSlice({
 export const {
   setCategoriesLoading,
   setCategories,
+  setCategoryDetail,
   addCategory,
   replaceCategory,
   removeCategory,
   setCategoriesError,
   resetCategoriesState,
+  setGameCategories,
 } = categoriesSlice.actions;
 
 export const categoriesReducer = categoriesSlice.reducer;

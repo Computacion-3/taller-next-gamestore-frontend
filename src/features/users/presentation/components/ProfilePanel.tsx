@@ -21,13 +21,13 @@ const dateFormat = new Intl.DateTimeFormat('es-CO', {
 
 export function ProfilePanel() {
   const { user, updateSessionUser } = useAuth();
-  const { getMyProfile } = useUsers();
+  const { getMyAccount } = useUsers();
   const [profile, setProfile] = useState<UserAccount | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    getMyProfile()
+    getMyAccount()
       .then((result) => {
         if (active) setProfile(result);
       })
@@ -41,7 +41,7 @@ export function ProfilePanel() {
     return () => {
       active = false;
     };
-  }, [getMyProfile]);
+  }, [getMyAccount]);
 
   if (!user) return null;
 

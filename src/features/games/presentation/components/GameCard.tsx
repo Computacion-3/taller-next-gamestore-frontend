@@ -1,23 +1,38 @@
+import Link from 'next/link';
+import { ReactNode } from 'react';
 import { Game } from '../../domain/entities/Game';
 
 export interface GameCardProps {
   game: Game;
+  /** Acciones opcionales (botones) que decide el contenedor. */
+  actions?: ReactNode;
 }
 
-export function GameCard({ game }: GameCardProps) {
+export function GameCard({ game, actions }: GameCardProps) {
+  const detailHref = `/games/${game.id}`;
+
   return (
     <article className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 shadow-md">
       {game.coverImage && (
-        <img
-          src={game.coverImage}
-          alt={game.title}
-          loading="lazy"
-          className="aspect-[460/215] w-full object-cover"
-        />
+        // La portada también lleva al detalle; se saca del orden de tabulación
+        // porque el título ya es el enlace accesible
+        <Link href={detailHref} tabIndex={-1} aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={game.coverImage}
+            alt=""
+            loading="lazy"
+            className="aspect-460/215 w-full object-cover transition hover:opacity-90"
+          />
+        </Link>
       )}
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-lg font-semibold text-white">{game.title}</h3>
+          <h3 className="text-lg font-semibold text-white">
+            <Link href={detailHref} className="transition hover:text-blue-star">
+              {game.title}
+            </Link>
+          </h3>
           {game.hasDiscount && (
             <span className="shrink-0 rounded bg-emerald-600 px-2 py-0.5 text-xs font-bold text-white">
               -{game.discount}%
@@ -38,6 +53,9 @@ export function GameCard({ game }: GameCardProps) {
             ${game.price.toFixed(2)}
           </span>
         </div>
+        {actions && (
+          <div className="mt-4 border-t border-slate-800 pt-3">{actions}</div>
+        )}
       </div>
     </article>
   );

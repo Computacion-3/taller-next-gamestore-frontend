@@ -165,6 +165,7 @@ export function useAuth() {
     [dispatch],
   );
 
+
   const logout = useCallback(async () => {
     dispatch(setAuthLoading(true));
     try {
@@ -199,7 +200,7 @@ export function useAuth() {
     hasAuthority,
     login,
     register,
-    refreshProfile,
+    refreshProfile,    
     updateSessionUser,
     logout,
     clearError,

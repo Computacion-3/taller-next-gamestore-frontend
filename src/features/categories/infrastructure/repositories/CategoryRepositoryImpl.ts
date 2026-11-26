@@ -1,4 +1,6 @@
 import { Category } from '../../domain/entities/Category';
+import { Game } from '@/features/games/domain/entities/Game';
+import { GameMapper } from '@/features/games/infrastructure/mappers/GameMapper';
 import {
   CategoryRepository,
   CreateCategoryParams,
@@ -20,6 +22,16 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return CategoryMapper.toDomain(dto);
   }
 
+  async getGames(categoryId: string): Promise<Game[]> {
+    const dtos = await this.datasource.getGames(categoryId);
+    return dtos.map(GameMapper.toDomain);
+  }
+
+  async getByGame(gameId: string): Promise<Category[]> {
+    const dtos = await this.datasource.getByGame(gameId);
+    return dtos.map(CategoryMapper.toDomain);
+  }
+
   async create(params: CreateCategoryParams): Promise<Category> {
     const dto = await this.datasource.create(CategoryMapper.toCreateDto(params));
     return CategoryMapper.toDomain(dto);
@@ -35,5 +47,18 @@ export class CategoryRepositoryImpl implements CategoryRepository {
 
   async delete(id: string): Promise<void> {
     await this.datasource.delete(id);
+  }
+
+  async assignToGame(gameId: string, categoryId: string): Promise<void> {
+    await this.datasource.assignToGame(gameId, categoryId);
+  }
+
+  async removeFromGame(gameId: string, categoryId: string): Promise<void> {
+    await this.datasource.removeFromGame(gameId, categoryId);
+  }
+
+  async setForGame(gameId: string, categoryIds: string[]): Promise<Category[]> {
+    const dtos = await this.datasource.setForGame(gameId, categoryIds);
+    return dtos.map(CategoryMapper.toDomain);
   }
 }
