@@ -24,13 +24,15 @@ function setBrowserSession(
 
 function getFirstGame(adminToken: string): Cypress.Chainable<ApiGame> {
   return cy
-    .request<{ data?: ApiGame[] } | ApiGame[]>({
+    .request<{ items?: ApiGame[]; data?: ApiGame[] } | ApiGame[]>({
       method: 'GET',
       url: `${apiUrl()}/games?limit=6`,
       headers: { Authorization: `Bearer ${adminToken}` },
     })
     .then((res) => {
-      const list = Array.isArray(res.body) ? res.body : (res.body.data ?? []);
+      const list = Array.isArray(res.body)
+        ? res.body
+        : (res.body.items ?? res.body.data ?? []);
       expect(list.length, 'debe haber al menos un juego sembrado').to.be.greaterThan(0);
       return list[0];
     });
