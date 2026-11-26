@@ -8,8 +8,8 @@ export default defineConfig({
     supportFile: 'cypress/support/e2e.ts',
     video: false,
     defaultCommandTimeout: 8000,
-    env: {
-      // Backend NestJS. Para otro entorno: --env apiUrl=https://mi-backend.com
+    expose: {
+      // Backend NestJS. Para otro entorno: --expose apiUrl=https://mi-backend.com
       apiUrl: 'http://localhost:3000',
     },
   },

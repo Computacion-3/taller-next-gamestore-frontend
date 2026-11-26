@@ -90,14 +90,14 @@ describe('Perfil del usuario (/profile)', () => {
 
       cy.request({
         method: 'POST',
-        url: `${Cypress.env('apiUrl')}/auth/login`,
+        url: `${Cypress.expose('apiUrl')}/auth/login`,
         body: { email: user.email, password: 'NuevaPass456' },
       })
         .its('status')
         .should('eq', 200);
       cy.request({
         method: 'POST',
-        url: `${Cypress.env('apiUrl')}/auth/login`,
+        url: `${Cypress.expose('apiUrl')}/auth/login`,
         body: { email: user.email, password: 'Password123' },
         failOnStatusCode: false,
       })

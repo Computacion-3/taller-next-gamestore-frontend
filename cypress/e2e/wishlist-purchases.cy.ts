@@ -8,7 +8,7 @@ interface ApiGame {
   discount: number;
 }
 
-const apiUrl = () => Cypress.env('apiUrl') as string;
+const apiUrl = () => Cypress.expose('apiUrl') as string;
 
 function setBrowserSession(
   accessToken: string,

@@ -26,7 +26,7 @@ export const CLIENT: Credentials = {
   password: 'client',
 };
 
-const apiUrl = () => Cypress.env('apiUrl') as string;
+const apiUrl = () => Cypress.expose('apiUrl') as string;
 
 /** JWT sin firma válida: sirve para probar el proxy y el rechazo del backend. */
 export function fakeJwt(payload: Record<string, unknown>): string {
