@@ -20,6 +20,7 @@ describe('Control de acceso por sesión y roles', () => {
 
     it('tras iniciar sesión vuelve a la ruta que quería visitar', () => {
       cy.visit('/users');
+      cy.get('main form fieldset').should('not.be.disabled');
       cy.get('#login-email').type(ADMIN.email);
       cy.get('#login-password').type(ADMIN.password, { log: false });
       cy.get('main form button[type="submit"]').click();
