@@ -1,6 +1,6 @@
 import { ADMIN, RegisteredUser } from '../support/commands';
 
-const apiUrl = () => Cypress.env('apiUrl') as string;
+const apiUrl = () => Cypress.expose('apiUrl') as string;
 
 describe('Gestión de usuarios y roles (/users)', () => {
   beforeEach(() => {

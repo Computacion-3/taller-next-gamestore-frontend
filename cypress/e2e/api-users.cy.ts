@@ -1,6 +1,6 @@
 import { ADMIN, CLIENT } from '../support/commands';
 
-const apiUrl = () => Cypress.env('apiUrl') as string;
+const apiUrl = () => Cypress.expose('apiUrl') as string;
 const MISSING_ID = '00000000-0000-4000-8000-000000000000';
 
 function api(
